@@ -43,7 +43,7 @@ const simulations: Simulation[] = [
   {
     id: 'model-viewer',
     name: '3D Model Viewer',
-    description: 'Showcase of 3D model viewer',
+    description: 'Interactive 3D model viewer with dynamic lighting',
     component: ModelViewerSimulation
   }
 ];

@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { projects } from '../../src/data/projects';
 import ProjectCard from './ProjectCard';
+import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
+import Image from 'next/image';
 
 export default function Projects() {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
@@ -98,12 +100,44 @@ export default function Projects() {
 
                 {/* Image section */}
                 <div className="flex-shrink-0 w-[400px] h-[250px] relative overflow-hidden rounded-lg">
-                  <img
-                    src={currentProject.image}
-                    alt={currentProject.title}
-                    className="object-cover w-full h-full"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-theme-darker/90 to-transparent" />
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="relative group cursor-pointer"
+                  >
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="flex gap-4">
+                        <motion.a
+                          href={currentProject.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="text-2xl text-white hover:text-theme-accent transition-colors cursor-pointer relative z-20"
+                        >
+                          <FaGithub />
+                        </motion.a>
+                        <motion.a
+                          href={currentProject.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="text-2xl text-white hover:text-theme-accent transition-colors cursor-pointer relative z-20"
+                        >
+                          <FaExternalLinkAlt />
+                        </motion.a>
+                      </div>
+                    </div>
+                    <Image
+                      src={currentProject.image}
+                      alt={currentProject.title}
+                      width={500}
+                      height={300}
+                      className="rounded-lg"
+                    />
+                  </motion.div>
                 </div>
               </motion.div>
             )}

@@ -49,32 +49,7 @@ const simulations: Simulation[] = [
 ];
 
 export default function Hero() {
-  const [currentSimulation, setCurrentSimulation] = useState<Simulation>(simulations[0]);
-  const [showSimulation, setShowSimulation] = useState(true);
   const aboutRef = useRef<HTMLDivElement>(null);
-
-  // Use useEffect to set random simulation after initial render
-  useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * simulations.length);
-    setCurrentSimulation(simulations[randomIndex]);
-  }, []); // Empty dependency array means this runs once after mount
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const threshold = windowHeight * 0.5; // Start fading when halfway through the hero section
-      
-      if (scrollPosition > threshold) {
-        setShowSimulation(false);
-      } else {
-        setShowSimulation(true);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const scrollToAbout = () => {
     aboutRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -83,14 +58,9 @@ export default function Hero() {
   return (
     <section className="min-h-screen flex items-center justify-center relative px-4">
       {/* Background Simulation */}
-      <motion.div
-        initial={{ opacity: 1 }}
-        animate={{ opacity: showSimulation ? 1 : 0 }}
-        transition={{ duration: 0.5 }}
-        className="absolute inset-0"
-      >
-        <currentSimulation.component />
-      </motion.div>
+      <div className="absolute inset-0">
+        <ModelViewer modelPath="/models/leo.fbx" />
+      </div>
 
       {/* Content */}
       <motion.div
@@ -109,41 +79,42 @@ export default function Hero() {
           <motion.a
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            href="/resume.pdf"
+            href="/images/michaelsalton_resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
+            title="michaelsalton_resume"
             className="text-theme-accent hover:text-theme-accent/80 transition-colors text-lg"
           >
             Resume
           </motion.a>
           <div className="h-6 w-px bg-gray-600"></div>
           <motion.a
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
             href="https://github.com/michaelsalton"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-2xl text-gray-300 hover:text-white transition-colors cursor-pointer relative z-10"
           >
             <FaGithub />
           </motion.a>
           <motion.a
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            href="https://linkedin.com/in/michael-salton"
+            href="https://www.linkedin.com/in/michaelsalton/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-2xl text-gray-300 hover:text-white transition-colors cursor-pointer relative z-10"
           >
             <FaLinkedin />
           </motion.a>
           <motion.a
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            href="https://youtube.com/@michaelsalton"
+            href="https://www.youtube.com/@MichaelSalton"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-2xl text-gray-300 hover:text-white transition-colors cursor-pointer relative z-10"
           >
             <FaYoutube />
           </motion.a>
@@ -159,15 +130,6 @@ export default function Hero() {
           </motion.a>
         </div>
       </motion.div>
-
-      {/* Simulation Selector */}
-      <div className="absolute bottom-8 left-8">
-        <SimulationSelector
-          simulations={simulations}
-          currentSimulation={currentSimulation}
-          onSelect={setCurrentSimulation}
-        />
-      </div>
 
       {/* Scroll indicator */}
       <motion.div

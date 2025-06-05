@@ -18,8 +18,8 @@ export default function Navbar() {
               MS
             </Link>
           </div>
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+          <div className="flex items-center space-x-6">
+            <div className="hidden md:flex items-baseline space-x-4">
               <Link href="#about" className="text-theme-mid hover:text-theme-light px-3 py-2 rounded-md text-sm font-medium">
                 About
               </Link>

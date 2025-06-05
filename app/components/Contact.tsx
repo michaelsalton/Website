@@ -27,9 +27,10 @@ export default function Contact() {
             <motion.a
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              href="/resume.pdf"
+              href="/images/michaelsalton_resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
+              title="michaelsalton_resume"
               className="text-theme-accent hover:text-theme-accent/80 transition-colors text-lg"
             >
               Resume

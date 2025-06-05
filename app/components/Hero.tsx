@@ -7,6 +7,7 @@ import SimulationSelector from './SimulationSelector';
 import FluidSimulation from './simulations/FluidSimulation';
 import VoronoiPattern from './simulations/VoronoiPattern';
 import WolfensteinDemo from './simulations/WolfensteinDemo';
+import ModelViewer from './simulations/ModelViewer';
 
 interface Simulation {
   id: string;
@@ -33,6 +34,12 @@ const simulations: Simulation[] = [
     name: 'Fluid Simulation',
     description: 'Flowing liquid effect with turbulence',
     component: FluidSimulation
+  },
+  {
+    id: 'model-viewer',
+    name: '3D Model Viewer',
+    description: 'Showcase of St Dominics FBX model',
+    component: () => <ModelViewer modelPath="/models/St Dominics 100k.fbx" />
   }
 ];
 

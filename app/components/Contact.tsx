@@ -1,0 +1,82 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { FaGithub, FaLinkedin, FaYoutube, FaTiktok } from 'react-icons/fa';
+
+export default function Contact() {
+  return (
+    <section id="contact" className="py-20 px-4 bg-black/20 backdrop-blur-sm">
+      <div className="max-w-4xl mx-auto text-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-theme-accent">
+          Get in Touch
+        </h2>
+        <p className="text-lg mb-8 text-gray-300">
+          I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
+        </p>
+        <div className="space-y-6">
+          <motion.a
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            href="mailto:michaeldsalton@gmail.com"
+            className="inline-block bg-blue-400 text-black px-8 py-3 rounded-md font-semibold hover:bg-blue-300 transition-colors"
+          >
+            michaeldsalton@gmail.com
+          </motion.a>
+          <div className="flex items-center justify-center gap-8 mt-8">
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-theme-accent hover:text-theme-accent/80 transition-colors text-lg"
+            >
+              Resume
+            </motion.a>
+            <div className="h-6 w-px bg-gray-600"></div>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              href="https://github.com/michaelsalton"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
+            >
+              <FaGithub />
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              href="https://linkedin.com/in/michael-salton"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
+            >
+              <FaLinkedin />
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              href="https://youtube.com/@michaelsalton"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
+            >
+              <FaYoutube />
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              href="https://tiktok.com/@michaelsalton"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
+            >
+              <FaTiktok />
+            </motion.a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+} 

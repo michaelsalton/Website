@@ -52,7 +52,7 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
     // Load the model
     const fbxLoader = new FBXLoader();
     // Use the correct path based on environment
-    const modelUrl = `${basePath}/models/leo.fbx`;
+    const modelUrl = `${basePath}${modelPath}`;
     console.log('Loading model from URL:', modelUrl);
     
     fbxLoader.load(

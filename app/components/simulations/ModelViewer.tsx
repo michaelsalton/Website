@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
-export default function ModelViewer() {
+interface ModelViewerProps {
+  modelPath: string;
+}
+
+export default function ModelViewer({ modelPath }: ModelViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,16 +45,18 @@ export default function ModelViewer() {
     containerRef.current.appendChild(renderer.domElement);
 
     // Load the model
-    const basePath = '/website-2';
-    const modelPath = `${basePath}/models/leo.fbx`;
-    
+    const isProd = process.env.NODE_ENV === 'production';
+    const basePath = isProd ? '/website-2' : '';
     console.log('Attempting to load model from:', modelPath);
     
     // Load the model
     const fbxLoader = new FBXLoader();
-    fbxLoader.setPath(basePath + '/models/');
+    // Use the correct path based on environment
+    const modelUrl = `${basePath}/models/leo.fbx`;
+    console.log('Loading model from URL:', modelUrl);
+    
     fbxLoader.load(
-      'leo.fbx',
+      modelUrl,
       (fbx) => {
         console.log('Model loaded successfully');
         
@@ -281,7 +287,7 @@ export default function ModelViewer() {
       }
       renderer.dispose();
     };
-  }, []);
+  }, [modelPath]);
 
   return (
     <div className="w-full h-full bg-white">

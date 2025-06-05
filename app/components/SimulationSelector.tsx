@@ -3,11 +3,12 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
-interface Simulation {
+interface Simulation<T = {}> {
   id: string;
   name: string;
   description: string;
-  component: React.ComponentType;
+  component: React.ComponentType<T>;
+  props?: T;
 }
 
 interface Props {

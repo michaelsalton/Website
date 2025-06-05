@@ -14,13 +14,12 @@ interface Simulation {
   id: string;
   name: string;
   description: string;
-  component: React.ComponentType<any>;
-  props?: any;
+  component: React.ComponentType;
 }
 
-interface ModelViewerProps {
-  modelPath: string;
-}
+const ModelViewerSimulation: React.FC = () => {
+  return <ModelViewer modelPath="/models/leo.fbx" />;
+};
 
 const simulations: Simulation[] = [
   {
@@ -45,7 +44,7 @@ const simulations: Simulation[] = [
     id: 'model-viewer',
     name: '3D Model Viewer',
     description: 'Showcase of 3D model viewer',
-    component: () => <ModelViewer modelPath="/models/leo.fbx" />
+    component: ModelViewerSimulation
   }
 ];
 
@@ -85,7 +84,7 @@ export default function Hero() {
         transition={{ duration: 0.5 }}
         className="absolute inset-0"
       >
-        <currentSimulation.component {...currentSimulation.props} />
+        <currentSimulation.component />
       </motion.div>
 
       {/* Content */}

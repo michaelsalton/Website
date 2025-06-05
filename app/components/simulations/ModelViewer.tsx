@@ -46,7 +46,8 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
 
     // Load the model
     const isProd = process.env.NODE_ENV === 'production';
-    const basePath = isProd ? '/website-2' : '';
+    // Remove the /website-2 prefix as it's handled by Vercel
+    const basePath = '';
     console.log('Attempting to load model from:', modelPath);
     
     // Load the model

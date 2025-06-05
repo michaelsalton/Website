@@ -1,7 +1,57 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import SectionDivider from './SectionDivider';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import * as THREE from 'three';
+
+function Scene() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const lightRef = useRef<THREE.DirectionalLight>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.005;
+    }
+    if (lightRef.current) {
+      lightRef.current.position.x = Math.sin(state.clock.elapsedTime * 0.5) * 5;
+      lightRef.current.position.z = Math.cos(state.clock.elapsedTime * 0.5) * 5;
+    }
+  });
+
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={[0, 0, 5]} />
+      <OrbitControls enableZoom={false} enablePan={false} />
+      
+      {/* Main object */}
+      <mesh ref={meshRef} castShadow>
+        <torusKnotGeometry args={[1, 0.3, 128, 32]} />
+        <meshPhysicalMaterial
+          color="#6366f1"
+          metalness={0.8}
+          roughness={0.2}
+          clearcoat={1}
+          clearcoatRoughness={0.2}
+        />
+      </mesh>
+
+      {/* Lighting */}
+      <directionalLight
+        ref={lightRef}
+        intensity={2}
+        position={[5, 5, 5]}
+        castShadow
+      />
+      <ambientLight intensity={0.5} />
+      
+      {/* Environment */}
+      <Environment preset="sunset" />
+    </>
+  );
+}
 
 export default function About() {
   return (
@@ -15,13 +65,11 @@ export default function About() {
             viewport={{ once: true }}
             className="flex items-center gap-16"
           >
-            {/* Left side - Image */}
-            <div className="w-1/2 relative">
-              <div className="aspect-square rounded-lg overflow-hidden bg-gray-800/50 border border-gray-700">
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  [Your Image Here]
-                </div>
-              </div>
+            {/* Left side - 3D Scene */}
+            <div className="w-1/2 relative h-[400px]">
+              <Canvas shadows>
+                <Scene />
+              </Canvas>
             </div>
 
             {/* Right side - Text */}

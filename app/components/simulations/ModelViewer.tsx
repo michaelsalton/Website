@@ -12,6 +12,8 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showScene, setShowScene] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -46,13 +48,11 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
 
     // Load the model
     const isProd = process.env.NODE_ENV === 'production';
-    // Remove the /website-2 prefix as it's handled by Vercel
     const basePath = '';
     console.log('Attempting to load model from:', modelPath);
     
     // Load the model
     const fbxLoader = new FBXLoader();
-    // Use the correct path based on environment
     const modelUrl = `${basePath}${modelPath}`;
     console.log('Loading model from URL:', modelUrl);
     
@@ -72,13 +72,13 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
         
         // Scale the model
         const maxDim = Math.max(size.x, size.y, size.z);
-        const scale = 0.020; // Back to working scale
+        const scale = 0.020;
         fbx.scale.setScalar(scale);
         
         // Position the model
         fbx.position.set(-25, -0.15, 1);
         
-        // Rotate the model counter-clockwise by 65 degrees
+        // Rotate the model
         fbx.rotation.y = THREE.MathUtils.degToRad(200);
         fbx.rotation.x = THREE.MathUtils.degToRad(-3);
         fbx.rotation.z = THREE.MathUtils.degToRad(2.2);
@@ -89,7 +89,6 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
             child.castShadow = true;
             child.receiveShadow = true;
             if (child.material) {
-              // Create new material with different properties
               const newMaterial = new THREE.MeshPhongMaterial({
                 map: child.material.map,
                 shininess: 0,
@@ -130,7 +129,7 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
 
         // Add subtle front-facing light
         const frontLight = new THREE.PointLight(0xffffff, 25);
-        frontLight.position.set(0, 10, 45); // Position near camera
+        frontLight.position.set(0, 10, 45);
         frontLight.castShadow = true;
         frontLight.shadow.mapSize.width = 1024;
         frontLight.shadow.mapSize.height = 1024;
@@ -159,15 +158,13 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
         // Initialize particles
         for (let i = 0; i < particleCount; i++) {
           const i3 = i * 3;
-          // Tighter spread of initial positions
           positions[i3] = (Math.random() - 0.5) * 2;
           positions[i3 + 1] = Math.random() * 1;
           positions[i3 + 2] = (Math.random() - 0.5) * 2;
 
-          // Fire colors (orange to yellow)
-          colors[i3] = 1.0;     // R
-          colors[i3 + 1] = 0.3 + Math.random() * 0.4; // G
-          colors[i3 + 2] = 0.0; // B
+          colors[i3] = 1.0;
+          colors[i3 + 1] = 0.3 + Math.random() * 0.4;
+          colors[i3 + 2] = 0.0;
 
           sizes[i] = 0.05 + Math.random() * 0.1;
           lifetimes[i] = 0;
@@ -196,7 +193,6 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
           const positions = particles.attributes.position.array;
           const colors = particles.attributes.color.array;
           
-          // Only spawn new particles every 0.2 seconds
           particleTimer += deltaTime;
           if (particleTimer > 0.2) {
             particleTimer = 0;
@@ -205,24 +201,17 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
           for (let i = 0; i < particleCount; i++) {
             const i3 = i * 3;
             
-            // Update lifetime
             lifetimes[i] += deltaTime;
             
-            // Only move particles that are "alive"
-            if (lifetimes[i] < 1.0) { // Particles live for 1 second
-              // More controlled upward movement
+            if (lifetimes[i] < 1.0) {
               positions[i3 + 1] += deltaTime * (0.3 + Math.random() * 0.4);
-              
-              // Reduced horizontal movement
               positions[i3] += (Math.random() - 0.5) * 0.05;
               positions[i3 + 2] += (Math.random() - 0.5) * 0.05;
               
-              // Fade out based on lifetime
               const lifeRatio = 1 - (lifetimes[i] / 1.0);
               colors[i3 + 1] = Math.max(0.1, 0.3 * lifeRatio);
             } else {
-              // Reset particle if it's too old or too high
-              if (particleTimer < 0.1) { // Only reset on first half of spawn interval
+              if (particleTimer < 0.1) {
                 positions[i3] = (Math.random() - 0.5) * 2;
                 positions[i3 + 1] = 0;
                 positions[i3 + 2] = (Math.random() - 0.5) * 2;
@@ -235,7 +224,6 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
           particles.attributes.position.needsUpdate = true;
           particles.attributes.color.needsUpdate = true;
           
-          // Create flickering effect
           const time = currentTime * 0.001;
           const flickerIntensity = 3.0 + Math.sin(time * 15) * 0.5 + Math.sin(time * 7) * 0.2;
           const flickerPosition = Math.sin(time * 8) * 0.15;
@@ -243,44 +231,36 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
           flickerLight.intensity = Math.max(1.0, flickerIntensity);
           flickerLight.position.y = 3 + flickerPosition;
           
-          // Just render the scene without rotating
           renderer.render(scene, camera);
         };
         
         animate();
-        
-        // Set loading to false after everything is set up
         setLoading(false);
+        setSceneReady(true);
       },
-      (xhr) => {
-        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-      },
+      undefined,
       (error) => {
         console.error('Error loading model:', error);
-        setError('Failed to load model: ' + (error instanceof Error ? error.message : String(error)));
+        setError('Failed to load model');
         setLoading(false);
       }
     );
 
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    };
-    animate();
-
     // Handle window resize
     const handleResize = () => {
       if (!containerRef.current) return;
+      
       const width = containerRef.current.clientWidth;
       const height = containerRef.current.clientHeight;
+      
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      
       renderer.setSize(width, height);
     };
+
     window.addEventListener('resize', handleResize);
 
-    // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
       if (containerRef.current) {
@@ -290,20 +270,38 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
     };
   }, [modelPath]);
 
+  // Start the loading screen timer after the scene is ready
+  useEffect(() => {
+    if (sceneReady) {
+      const timer = setTimeout(() => {
+        setShowScene(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [sceneReady]);
+
   return (
-    <div className="w-full h-full bg-white">
-      <div ref={containerRef} className="w-full h-full relative">
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-10 text-black text-lg">
-            Loading model...
-          </div>
-        )}
-        {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-red-900 bg-opacity-80 z-20 text-white text-lg p-4 text-center">
-            {error}
-          </div>
-        )}
-      </div>
+    <div className="relative w-full h-full">
+      {!showScene && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
+          <h1 className="text-4xl md:text-6xl font-bold text-theme-accent animate-[pulse_2s_ease-in-out_infinite]">
+            LOADING
+          </h1>
+        </div>
+      )}
+      <div ref={containerRef} className="w-full h-full" />
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
+          <p className="text-red-500 text-xl">{error}</p>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 } 

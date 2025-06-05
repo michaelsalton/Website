@@ -11,7 +11,7 @@ import SimulationsGrid from './components/SimulationsGrid';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Portfolio | Computer Graphics & Real-time Rendering',
+  title: 'Michael Salton',
   description: 'Portfolio showcasing expertise in computer graphics, real-time rendering, and interactive 3D applications.',
 };
 

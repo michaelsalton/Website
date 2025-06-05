@@ -116,6 +116,8 @@ export default function Hero() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             href="https://github.com/michaelsalton"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
           >
             <FaGithub />
@@ -124,6 +126,8 @@ export default function Hero() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             href="https://linkedin.com/in/michael-salton"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
           >
             <FaLinkedin />
@@ -132,6 +136,8 @@ export default function Hero() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             href="https://youtube.com/@michaelsalton"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
           >
             <FaYoutube />
@@ -140,6 +146,8 @@ export default function Hero() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             href="https://tiktok.com/@michaelsalton"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
           >
             <FaTiktok />

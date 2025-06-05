@@ -1,24 +1,35 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 interface ProjectCardProps {
   title: string;
-  description: string;
-  technologies: string[];
-  githubUrl: string;
-  liveUrl?: string;
-  image: string;
   onHover: (isHovered: boolean) => void;
+  isHovered: boolean;
 }
 
 export default function ProjectCard({
   title,
-  githubUrl,
   onHover,
+  isHovered,
 }: ProjectCardProps) {
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      onHover(true);
+    }, 250); // 250ms delay
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    onHover(false);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -27,21 +38,20 @@ export default function ProjectCard({
       transition={{ duration: 0.5 }}
       className="relative flex items-center"
     >
-      {/* Project link with hover detection */}
+      {/* Project title - always visible and handles hover */}
       <div
-        onMouseEnter={() => onHover(true)}
-        onMouseLeave={() => onHover(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className="relative z-10 w-64"
       >
-        <a
-          href={githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-theme-light hover:text-theme-mid transition-colors text-lg whitespace-nowrap"
-        >
-          {title} →
-        </a>
+        {/* Title text, not a link anymore as the link is handled in Projects.tsx */}
+        <div className="text-theme-light hover:text-theme-mid transition-colors text-lg whitespace-nowrap block cursor-pointer">
+          {title}{isHovered && ' →'}
+        </div>
       </div>
+      
+      {/* Removed separate Live Demo and GitHub links */}
+
     </motion.div>
   );
 } 

@@ -6,44 +6,63 @@ export interface Project {
   liveUrl?: string;
   image: string;
   isHovered: boolean;
+  githubText?: string;
+  liveText?: string;
+  paperUrl?: string;
+  paperText?: string;
 }
 
 export const projects: Project[] = [
   {
-    title: "Real-time Ray Tracer",
-    description: "A GPU-accelerated ray tracer built with WebGL and GLSL, featuring real-time reflections, refractions, and global illumination. The project demonstrates advanced rendering techniques including PBR materials, dynamic scene editing, and interactive camera controls.",
-    technologies: ["WebGL", "GLSL", "TypeScript", "Computer Graphics"],
-    githubUrl: "https://github.com/michaelsalton/real-time-raytracer",
-    liveUrl: "https://raytracer.michaelsalton.com",
-    image: "/projects/raytracer.jpg",
-    isHovered: false
-  },
-  {
     title: "Discover Old D'Hanis",
-    description: "A journey through the historic town of Old D'Hanis, exploring its rich heritage and cultural significance.",
-    technologies: ["Web Development", "History", "Documentation"],
+    description: "Step into the past and unravel the rich history of Old D'Hanis. Explore this 19th-century town, from Alsatian and German settlers of 1847 to Black and Mexican families post-Civil War. Unearth archival fragments, archaeological photos, and oral histories to piece together the town's alluring stories.",
+    technologies: ["Unity", "C#", "Photogrammetry", "Game Development"],
     githubUrl: "https://github.com/michaelsalton/discover-old-dhanis",
-    liveUrl: "https://discoverolddhanis.com",
-    image: "/projects/discover-old-dhanis.jpg",
-    isHovered: false
+    liveUrl: "https://store.steampowered.com/app/3140860/Discover_Old_DHanis/",
+    image: "/images/dod.jpg",
+    isHovered: false,
+    githubText: "Website",
+    liveText: "Steam"
   },
   {
-    title: "Saga Software Rasterizer",
-    description: "A custom software rasterizer implementation, exploring the fundamentals of computer graphics and rendering techniques.",
-    technologies: ["C++", "Computer Graphics", "Rendering"],
-    githubUrl: "https://github.com/michaelsalton/saga-rasterizer",
+    title: "Software Rasterizer",
+    description: "Custom software rasterizer built with C++ and SDL.",
+    technologies: ["C++", "SDL", "Rendering"],
+    githubUrl: "#",
     liveUrl: null,
-    image: "/projects/saga-rasterizer.jpg",
-    isHovered: false
+    image: "/images/link.png",
+    isHovered: false,
   },
   {
     title: "3D Pixel Art Engine",
     description: "An innovative engine for creating and rendering 3D pixel art, combining retro aesthetics with modern techniques.",
-    technologies: ["C++", "OpenGL", "Graphics Programming"],
+    technologies: ["C++", "Rendering"],
     githubUrl: "https://github.com/michaelsalton/pixel-art-engine",
     liveUrl: null,
-    image: "/projects/pixel-art-engine.jpg",
-    isHovered: false
+    image: "/images/pixel.png",
+    isHovered: false,
+  },
+  {
+    title: "Project Lambda",
+    description: "An AI project exploring reinforcement learning in Counter-Strike using OpenAI Gym. The goal was to create an AI agent that plays like a human while relying solely on visual input, without accessing game memory. The agent was trained on professional gameplay footage using behavioral cloning and offline reinforcement learning.",
+    technologies: ["Python", "Machine Learning"],
+    githubUrl: "https://github.com/michaelsalton/project-lambda",
+    liveUrl: "https://youtube.com/watch?v=project-lambda-demo",
+    image: "/images/cs.jpg",
+    isHovered: false,
+    githubText: "GitHub",
+    liveText: "Video Demo",
+    paperUrl: "https://arxiv.org/abs/project-lambda",
+    paperText: "Paper"
+  },
+  {
+    title: "Saga",
+    description: "An survival game set in Iceland during the Saga Age. Players will explore, gather resources, manage a settlement and more while following stories inspired by the Sagas of Icelanders.",
+    technologies: ["Unity", "C#", "Game Development"],
+    githubUrl: "#",
+    liveUrl: null,
+    image: "/images/saga.png",
+    isHovered: false,
   },
   {
     title: "The Wild Waste",
@@ -51,43 +70,16 @@ export const projects: Project[] = [
     technologies: ["Unity", "C#", "Game Design"],
     githubUrl: "https://github.com/michaelsalton/wild-waste",
     liveUrl: null,
-    image: "/projects/wild-waste.jpg",
-    isHovered: false
+    image: "/images/wild.png",
+    isHovered: false,
   },
   {
-    title: "Misanthrope Maze Game",
-    description: "A challenging maze game that explores themes of isolation and human nature through gameplay mechanics.",
-    technologies: ["Unity", "C#", "Game Design"],
-    githubUrl: "https://github.com/michaelsalton/misanthrope-maze",
+    title: "misanthrope",
+    description: "A game that blends 3D and 2D elements to create a unique sketchbook aesthetic. Features include procedural object placement using Poisson Disc Sampling, dynamic day/night cycle, and custom toon shaders.",
+    technologies: ["Unity", "C#", "Game Development"],
+    githubUrl: "#",
     liveUrl: null,
-    image: "/projects/misanthrope-maze.jpg",
-    isHovered: false
-  },
-  {
-    title: "Project Lambda",
-    description: "An experimental game project exploring procedural generation and emergent gameplay systems.",
-    technologies: ["C++", "Procedural Generation", "Game Development"],
-    githubUrl: "https://github.com/michaelsalton/project-lambda",
-    liveUrl: null,
-    image: "/projects/project-lambda.jpg",
-    isHovered: false
-  },
-  {
-    title: "Unreal Engine Video Game",
-    description: "A video game project built with Unreal Engine, showcasing advanced graphics and gameplay mechanics.",
-    technologies: ["Unreal Engine", "C++", "Game Development"],
-    githubUrl: "https://github.com/michaelsalton/unreal-game",
-    liveUrl: null,
-    image: "/projects/unreal-game.jpg",
-    isHovered: false
-  },
-  {
-    title: "Link's Treehouse",
-    description: "A fan project recreating Link's iconic treehouse from The Legend of Zelda series in 3D.",
-    technologies: ["3D Modeling", "Texturing", "Environment Design"],
-    githubUrl: "https://github.com/michaelsalton/links-treehouse",
-    liveUrl: null,
-    image: "/projects/links-treehouse.jpg",
-    isHovered: false
+    image: "/images/mis.png",
+    isHovered: false,
   }
 ]; 

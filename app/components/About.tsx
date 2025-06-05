@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import SectionDivider from './SectionDivider';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
@@ -56,7 +55,7 @@ function Scene() {
 export default function About() {
   return (
     <>
-      <section id="about" className="py-32 px-4 bg-black/20 backdrop-blur-sm relative overflow-hidden">
+      <section id="about" className="py-16 px-4 bg-black/20 backdrop-blur-sm relative overflow-hidden">
         <div className="max-w-6xl mx-auto relative">
           <motion.div
             initial={{ opacity: 0 }}
@@ -79,21 +78,27 @@ export default function About() {
               </h2>
               <div className="relative">
                 <p className="text-lg leading-relaxed mb-6 text-gray-300">
-                  I'm a passionate software engineer specializing in computer graphics and real-time rendering.
-                  My expertise lies in creating immersive 3D experiences and optimizing rendering pipelines
-                  for maximum performance.
+                  I'm currently completing my Master's degree in Computer Graphics at Concordia University, 
+                  where I focus on the intersection of computer graphics and machine learning techniques 
+                  for achieving photo-realism in real-time rendering.
                 </p>
                 <p className="text-lg leading-relaxed text-gray-300">
-                  When I'm not coding, you can find me exploring new rendering techniques,
-                  contributing to open-source graphics projects, or sharing my knowledge
-                  through technical writing and tutorials.
+                  My research and development work centers on pushing the boundaries of visual fidelity 
+                  through advanced rendering techniques and AI-driven approaches, with a particular focus 
+                  on real-time performance optimization and novel rendering methodologies.
                 </p>
+                <div className="mt-8 text-sm text-gray-400">
+                  Last updated: {new Date().toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </div>
               </div>
             </div>
           </motion.div>
         </div>
       </section>
-      <SectionDivider />
     </>
   );
 } 

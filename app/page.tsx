@@ -6,7 +6,6 @@ import About from './components/About';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Image from 'next/image';
-import SimulationsGrid from './components/SimulationsGrid';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,11 +20,6 @@ export default function Home() {
       <div className="relative z-10">
         <Hero />
         <About />
-        <div className="w-full py-12 bg-black">
-          <div className="container mx-auto px-4">
-            <SimulationsGrid />
-          </div>
-        </div>
         <Projects />
         <Contact />
       </div>

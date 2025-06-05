@@ -1,6 +1,6 @@
 # Michael Salton's Portfolio Website
 
-A modern, Westworld-inspired portfolio website built with Next.js, React, and Tailwind CSS.
+Built with WebGL, Next.js, React, and Tailwind CSS.
 
 ## Features
 

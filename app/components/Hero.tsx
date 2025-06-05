@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaYoutube, FaTiktok } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
@@ -13,7 +14,7 @@ interface Simulation {
   id: string;
   name: string;
   description: string;
-  component: React.ComponentType;
+  component: React.ComponentType<any>;
   props?: any;
 }
 

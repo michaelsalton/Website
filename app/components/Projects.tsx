@@ -20,7 +20,7 @@ export default function Projects() {
 
   return (
     <>
-      <section id="projects" className="py-20 relative">
+      <section id="projects" className="py-20 relative bg-theme-darker/20">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-theme-light mb-12">Projects</h2>
           

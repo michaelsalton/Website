@@ -5,24 +5,25 @@ import { FaGithub, FaLinkedin, FaYoutube, FaTiktok } from 'react-icons/fa';
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-20 px-4 bg-black/20 backdrop-blur-sm">
+    <section id="contact" className="py-20 px-4 bg-theme-darker/40 backdrop-blur-sm">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-8 text-theme-accent">
           Get in Touch
         </h2>
-        <p className="text-lg mb-8 text-gray-300">
+        <p className="text-lg mb-12 text-gray-300">
           I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
         </p>
-        <div className="space-y-6">
+        <div className="space-y-8">
           <motion.a
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             href="mailto:michaeldsalton@gmail.com"
-            className="inline-block bg-blue-400 text-black px-8 py-3 rounded-md font-semibold hover:bg-blue-300 transition-colors"
+            className="inline-block bg-theme-accent/10 text-theme-accent px-8 py-4 rounded-lg font-medium border border-theme-accent/20 hover:bg-theme-accent/20 transition-all duration-300"
           >
             michaeldsalton@gmail.com
           </motion.a>
-          <div className="flex items-center justify-center gap-8 mt-8">
+          
+          <div className="flex items-center justify-center gap-6">
             <motion.a
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}

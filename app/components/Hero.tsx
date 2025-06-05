@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaYoutube, FaTiktok } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SimulationSelector from './SimulationSelector';
 import FluidSimulation from './simulations/FluidSimulation';
 import VoronoiPattern from './simulations/VoronoiPattern';
@@ -51,6 +51,7 @@ const simulations: Simulation[] = [
 export default function Hero() {
   const [currentSimulation, setCurrentSimulation] = useState<Simulation>(simulations[0]);
   const [showSimulation, setShowSimulation] = useState(true);
+  const aboutRef = useRef<HTMLDivElement>(null);
 
   // Use useEffect to set random simulation after initial render
   useEffect(() => {
@@ -75,8 +76,12 @@ export default function Hero() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToAbout = () => {
+    aboutRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center relative px-4">
       {/* Background Simulation */}
       <motion.div
         initial={{ opacity: 1 }}
@@ -88,7 +93,7 @@ export default function Hero() {
       </motion.div>
 
       {/* Content */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
@@ -153,21 +158,45 @@ export default function Hero() {
             <FaTiktok />
           </motion.a>
         </div>
-
-        {/* Simulation Selector */}
-        <motion.div
-          initial={{ opacity: 1 }}
-          animate={{ opacity: showSimulation ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-          className="mt-8 flex justify-center"
-        >
-          <SimulationSelector
-            simulations={simulations}
-            currentSimulation={currentSimulation}
-            onSelect={setCurrentSimulation}
-          />
-        </motion.div>
       </motion.div>
+
+      {/* Simulation Selector */}
+      <div className="absolute bottom-8 left-8">
+        <SimulationSelector
+          simulations={simulations}
+          currentSimulation={currentSimulation}
+          onSelect={setCurrentSimulation}
+        />
+      </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        animate={{ opacity: [1, 0.5, 1] }}
+        transition={{ 
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer"
+        onClick={scrollToAbout}
+      >
+        <svg 
+          className="w-8 h-8 text-theme-accent/50 hover:text-theme-accent transition-colors" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M19 14l-7 7m0 0l-7-7m7 7V3" 
+          />
+        </svg>
+      </motion.div>
+
+      {/* Hidden element for scroll target */}
+      <div ref={aboutRef} className="absolute bottom-0" />
     </section>
   );
 } 

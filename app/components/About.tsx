@@ -2,103 +2,149 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei';
-import * as THREE from 'three';
 
-function Scene() {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const lightRef = useRef<THREE.DirectionalLight>(null);
+function Particles() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.005;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Particle settings
+    const particles: { x: number; y: number; size: number; speedX: number; speedY: number }[] = [];
+    const particleCount = 30;
+    const maxSize = 2;
+
+    // Create particles
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * maxSize + 0.5,
+        speedX: (Math.random() - 0.5) * 0.2,
+        speedY: (Math.random() - 0.5) * 0.2
+      });
     }
-    if (lightRef.current) {
-      lightRef.current.position.x = Math.sin(state.clock.elapsedTime * 0.5) * 5;
-      lightRef.current.position.z = Math.cos(state.clock.elapsedTime * 0.5) * 5;
-    }
-  });
+
+    // Animation
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particles.forEach(particle => {
+        // Update position
+        particle.x += particle.speedX;
+        particle.y += particle.speedY;
+
+        // Wrap around edges
+        if (particle.x < 0) particle.x = canvas.width;
+        if (particle.x > canvas.width) particle.x = 0;
+        if (particle.y < 0) particle.y = canvas.height;
+        if (particle.y > canvas.height) particle.y = 0;
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(99, 102, 241, 0.1)'; // theme-accent color with low opacity
+        ctx.fill();
+      });
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
 
   return (
-    <>
-      <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-      <OrbitControls enableZoom={false} enablePan={false} />
-      
-      {/* Main object */}
-      <mesh ref={meshRef} castShadow>
-        <torusKnotGeometry args={[1, 0.3, 128, 32]} />
-        <meshPhysicalMaterial
-          color="#6366f1"
-          metalness={0.8}
-          roughness={0.2}
-          clearcoat={1}
-          clearcoatRoughness={0.2}
-        />
-      </mesh>
-
-      {/* Lighting */}
-      <directionalLight
-        ref={lightRef}
-        intensity={2}
-        position={[5, 5, 5]}
-        castShadow
-      />
-      <ambientLight intensity={0.5} />
-      
-      {/* Environment */}
-      <Environment preset="sunset" />
-    </>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+    />
   );
 }
 
 export default function About() {
   return (
-    <>
-      <section id="about" className="py-16 px-4 bg-black/20 backdrop-blur-sm relative overflow-hidden">
-        <div className="max-w-6xl mx-auto relative">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-16"
-          >
-            {/* Left side - 3D Scene */}
-            <div className="w-1/2 relative h-[400px]">
-              <Canvas shadows>
-                <Scene />
-              </Canvas>
-            </div>
+    <section id="about" className="py-32 px-4 relative bg-theme-darker/30">
+      {/* Particles background */}
+      <Particles />
 
-            {/* Right side - Text */}
-            <div className="w-1/2">
-              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-theme-accent">
-                About Me
-              </h2>
-              <div className="relative">
-                <p className="text-lg leading-relaxed mb-6 text-gray-300">
-                  I'm currently completing my Master's degree in Computer Graphics at Concordia University, 
-                  where I focus on the intersection of computer graphics and machine learning techniques 
-                  for achieving photo-realism in real-time rendering.
-                </p>
-                <p className="text-lg leading-relaxed text-gray-300">
-                  My research and development work centers on pushing the boundaries of visual fidelity 
-                  through advanced rendering techniques and AI-driven approaches, with a particular focus 
-                  on real-time performance optimization and novel rendering methodologies.
-                </p>
-                <div className="mt-8 text-sm text-gray-400">
-                  Last updated: {new Date().toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-    </>
+      <div className="max-w-3xl mx-auto relative">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="space-y-12"
+        >
+          <div>
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-3xl font-bold text-theme-light mb-8 inline-block"
+            >
+              About Me
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="text-lg leading-relaxed text-gray-300"
+            >
+              I'm currently completing my Master's degree in Computer Science at Concordia University, 
+              where I focus on the intersection of computer graphics and machine learning techniques 
+              for achieving photo-realism in real-time rendering.
+            </motion.p>
+          </div>
+
+          <div>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="text-lg leading-relaxed text-gray-300"
+            >
+              My research and development work centers on pushing the boundaries of visual fidelity 
+              through advanced rendering techniques and AI-driven approaches, with a particular focus 
+              on real-time performance optimization and novel rendering methodologies.
+            </motion.p>
+          </div>
+
+          <div>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              viewport={{ once: true }}
+              className="text-sm text-gray-400"
+            >
+              Last updated: {new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 } 

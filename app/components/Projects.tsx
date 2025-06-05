@@ -47,10 +47,20 @@ export default function Projects() {
                           rel="noopener noreferrer"
                           className="text-theme-light hover:text-theme-mid transition-colors"
                         >
-                          Live Demo
+                          Live Demo →
                         </a>
                       </div>
                     )}
+                    <div className="mt-2">
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-theme-light hover:text-theme-mid transition-colors"
+                      >
+                        GitHub →
+                      </a>
+                    </div>
                   </div>
 
                   {/* Image section */}

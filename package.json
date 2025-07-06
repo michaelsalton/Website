@@ -8,7 +8,8 @@
     "export": "next export",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "gh-pages -d out"
+    "deploy": "gh-pages -d out",
+    "update-date": "node scripts/update-last-modified.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.1",

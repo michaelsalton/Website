@@ -3,64 +3,24 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaYoutube, FaTiktok } from 'react-icons/fa';
-import { useState, useEffect, useRef } from 'react';
-import SimulationSelector from './SimulationSelector';
-import FluidSimulation from './simulations/FluidSimulation';
-import VoronoiPattern from './simulations/VoronoiPattern';
-import WolfensteinDemo from './simulations/WolfensteinDemo';
-import ModelViewer from './simulations/ModelViewer';
-
-interface Simulation {
-  id: string;
-  name: string;
-  description: string;
-  component: React.ComponentType;
-}
-
-const ModelViewerSimulation: React.FC = () => {
-  return <ModelViewer modelPath="/models/leo.fbx" />;
-};
-
-const simulations: Simulation[] = [
-  {
-    id: 'wolfenstein',
-    name: 'Wolfenstein',
-    description: 'Retro-style raycasting engine',
-    component: WolfensteinDemo
-  },
-  {
-    id: 'voronoi',
-    name: 'Voronoi Pattern',
-    description: 'Dynamic cell patterns with color transitions',
-    component: VoronoiPattern
-  },
-  {
-    id: 'fluid',
-    name: 'Fluid Simulation',
-    description: 'Flowing liquid effect with turbulence',
-    component: FluidSimulation
-  },
-  {
-    id: 'model-viewer',
-    name: '3D Model Viewer',
-    description: 'Interactive 3D model viewer with dynamic lighting',
-    component: ModelViewerSimulation
-  }
-];
+import { useRef } from 'react';
+import NavigationArrows from './NavigationArrows';
 
 export default function Hero() {
   const aboutRef = useRef<HTMLDivElement>(null);
 
   const scrollToAbout = () => {
-    aboutRef.current?.scrollIntoView({ behavior: 'smooth' });
+    aboutRef.current?.scrollIntoView({ behavior: 'auto' });
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative px-4">
-      {/* Background Simulation */}
-      <div className="absolute inset-0">
-        <ModelViewer modelPath="/models/leo.fbx" />
-      </div>
+    <section id="hero" className="min-h-screen flex items-center justify-center relative px-4 snap-start">
+      {/* Dark Grey Background */}
+      <div className="absolute inset-0 bg-theme-darker/20"></div>
 
       {/* Content */}
       <motion.div
@@ -131,31 +91,13 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        animate={{ opacity: [1, 0.5, 1] }}
-        transition={{ 
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer"
-        onClick={scrollToAbout}
-      >
-        <svg 
-          className="w-8 h-8 text-theme-accent/50 hover:text-theme-accent transition-colors" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M19 14l-7 7m0 0l-7-7m7 7V3" 
-          />
-        </svg>
-      </motion.div>
+      {/* Navigation Arrows */}
+      <NavigationArrows 
+        onScrollUp={scrollToTop}
+        onScrollDown={scrollToAbout}
+        showUpArrow={false}
+        showDownArrow={true}
+      />
 
       {/* Hidden element for scroll target */}
       <div ref={aboutRef} className="absolute bottom-0" />

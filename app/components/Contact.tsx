@@ -2,11 +2,24 @@
 
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaYoutube, FaTiktok } from 'react-icons/fa';
+import { useRef } from 'react';
+import NavigationArrows from './NavigationArrows';
 
 export default function Contact() {
+  const scrollToProjects = () => {
+    const projectsSection = document.getElementById('projects');
+    if (projectsSection) {
+      projectsSection.scrollIntoView({ behavior: 'auto' });
+    }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
   return (
-    <section id="contact" className="py-20 px-4 bg-theme-darker/40 backdrop-blur-sm">
-      <div className="max-w-4xl mx-auto text-center">
+    <section id="contact" className="min-h-screen flex items-center justify-center relative px-4 bg-theme-darker/40 backdrop-blur-sm snap-start">
+              <div className="max-w-4xl mx-auto text-center w-full">
         <h2 className="text-3xl md:text-4xl font-bold mb-8 text-theme-accent">
           Get in Touch
         </h2>
@@ -77,8 +90,18 @@ export default function Contact() {
               <FaTiktok />
             </motion.a>
           </div>
+                  </div>
         </div>
-      </div>
-    </section>
-  );
-} 
+
+        {/* Navigation Arrows */}
+        <NavigationArrows 
+          onScrollUp={scrollToProjects}
+          onScrollDown={scrollToTop}
+          showUpArrow={true}
+          showDownArrow={false}
+        />
+
+
+      </section>
+    );
+  } 

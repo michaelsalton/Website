@@ -2,6 +2,16 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import NavigationArrows from './NavigationArrows';
+
+// This will be replaced during build time with the actual last modified date
+const LAST_MODIFIED_DATE = process.env.NODE_ENV === 'production' 
+  ? 'July 5, 2025' // This will be updated by the build script
+  : new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
 
 function Particles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -78,12 +88,26 @@ function Particles() {
 }
 
 export default function About() {
+  const scrollToHero = () => {
+    const heroSection = document.getElementById('hero');
+    if (heroSection) {
+      heroSection.scrollIntoView({ behavior: 'auto' });
+    }
+  };
+
+  const scrollToProjects = () => {
+    const projectsSection = document.getElementById('projects');
+    if (projectsSection) {
+      projectsSection.scrollIntoView({ behavior: 'auto' });
+    }
+  };
+
   return (
-    <section id="about" className="py-32 px-4 relative bg-theme-darker/30">
+    <section id="about" className="min-h-screen flex items-center justify-center relative px-4 bg-theme-darker/30 snap-start">
       {/* Particles background */}
       <Particles />
 
-      <div className="max-w-3xl mx-auto relative">
+      <div className="max-w-3xl mx-auto relative w-full">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -136,15 +160,21 @@ export default function About() {
               viewport={{ once: true }}
               className="text-sm text-gray-400"
             >
-              Last updated: {new Date().toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
+              Last updated: {LAST_MODIFIED_DATE}
             </motion.div>
           </div>
         </motion.div>
       </div>
+
+      {/* Navigation Arrows */}
+      <NavigationArrows 
+        onScrollUp={scrollToHero}
+        onScrollDown={scrollToProjects}
+        showUpArrow={true}
+        showDownArrow={true}
+      />
+
+
     </section>
   );
 } 

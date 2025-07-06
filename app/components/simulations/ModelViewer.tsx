@@ -12,9 +12,7 @@ interface ModelViewerProps {
 export default function ModelViewer({ modelPath }: ModelViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showScene, setShowScene] = useState(false);
   const [sceneReady, setSceneReady] = useState(false);
   const [fbx, setFbx] = useState<THREE.Group | null>(null);
   const [particles, setParticles] = useState<THREE.BufferGeometry | null>(null);
@@ -24,7 +22,6 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    setLoading(true);
     setError(null);
 
     // Set up scene
@@ -276,14 +273,12 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
         };
         
         animate();
-        setLoading(false);
         setSceneReady(true);
       },
       undefined,
       (error) => {
         console.error('Error loading model:', error);
         setError('Failed to load model');
-        setLoading(false);
       }
     );
 
@@ -311,65 +306,16 @@ export default function ModelViewer({ modelPath }: ModelViewerProps) {
     };
   }, [modelPath, theme]);
 
-  // Start the loading screen timer after the scene is ready
-  useEffect(() => {
-    if (sceneReady) {
-      const timer = setTimeout(() => {
-        setShowScene(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [sceneReady]);
 
-  // Disable scrolling while loading screen is visible
-  useEffect(() => {
-    if (!showScene) {
-      document.body.style.overflow = 'hidden';
-      // Hide navbar
-      const navbar = document.querySelector('nav');
-      if (navbar) {
-        navbar.style.display = 'none';
-      }
-    } else {
-      document.body.style.overflow = 'auto';
-      // Show navbar
-      const navbar = document.querySelector('nav');
-      if (navbar) {
-        navbar.style.display = 'block';
-      }
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-      // Ensure navbar is visible on cleanup
-      const navbar = document.querySelector('nav');
-      if (navbar) {
-        navbar.style.display = 'block';
-      }
-    };
-  }, [showScene]);
 
   return (
     <div className="relative w-full h-full">
-      {!showScene && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
-          <h1 className="text-4xl md:text-6xl font-bold text-theme-accent animate-[pulse_2s_ease-in-out_infinite]">
-            LOADING
-          </h1>
-        </div>
-      )}
       <div ref={containerRef} className="w-full h-full" />
       {error && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
           <p className="text-red-500 text-xl">{error}</p>
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 } 

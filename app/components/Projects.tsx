@@ -1,11 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { projects } from '../../src/data/projects';
 import ProjectCard from './ProjectCard';
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 import Image from 'next/image';
+import NavigationArrows from './NavigationArrows';
 
 // New ProjectLink component
 const ProjectLink = ({ url, text }: { url: string; text: string }) => {
@@ -27,7 +28,6 @@ const ProjectLink = ({ url, text }: { url: string; text: string }) => {
 
 export default function Projects() {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
-
   // Set initial hovered project to the first one
   useEffect(() => {
     if (projects.length > 0) {
@@ -35,13 +35,27 @@ export default function Projects() {
     }
   }, []);
 
+  const scrollToAbout = () => {
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'auto' });
+    }
+  };
+
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'auto' });
+    }
+  };
+
   // Find the currently hovered project object
   const currentProject = projects.find(p => p.title === hoveredProject);
 
   return (
     <>
-      <section id="projects" className="py-20 relative bg-theme-darker/20">
-        <div className="max-w-6xl mx-auto px-4">
+              <section id="projects" className="min-h-screen flex items-center justify-center relative px-4 bg-theme-darker/20 snap-start">
+        <div className="max-w-6xl mx-auto px-4 w-full">
           <h2 className="text-3xl font-bold text-theme-light mb-12">Projects</h2>
           
           {/* Project content container */}
@@ -170,6 +184,16 @@ export default function Projects() {
             )}
           </div>
         </div>
+
+        {/* Navigation Arrows */}
+        <NavigationArrows 
+          onScrollUp={scrollToAbout}
+          onScrollDown={scrollToContact}
+          showUpArrow={true}
+          showDownArrow={true}
+        />
+
+
       </section>
     </>
   );

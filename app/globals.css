@@ -16,11 +16,13 @@ body {
     rgb(var(--background-end-rgb))
   );
   overflow-x: hidden;
+  overflow-y: hidden; /* Prevent body scroll, let main container handle it */
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -34,6 +36,11 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #A0522D;
+}
+
+/* Hide horizontal scrollbar */
+::-webkit-scrollbar:horizontal {
+  display: none;
 }
 
 /* Custom animations */
@@ -57,7 +64,8 @@ body {
 
 /* Custom scrollbar for Firefox */
 .snap-y {
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: #8B4513 rgb(var(--background-start-rgb));
   scroll-snap-type: y mandatory;
 }
 
@@ -66,6 +74,12 @@ body {
 /* Disable smooth scrolling for snap scrolling */
 html {
   scroll-behavior: auto;
+  height: 100%;
+}
+
+/* Ensure full height for body */
+body {
+  height: 100%;
 }
 
 /* Ensure snap-start elements work properly */

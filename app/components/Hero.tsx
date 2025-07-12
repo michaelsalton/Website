@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaYoutube, FaTiktok } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaYoutube, FaTiktok, FaTwitter } from 'react-icons/fa';
 import { useRef } from 'react';
 import NavigationArrows from './NavigationArrows';
 
@@ -77,6 +77,16 @@ export default function Hero() {
             className="text-2xl text-gray-300 hover:text-white transition-colors cursor-pointer relative z-10"
           >
             <FaYoutube />
+          </motion.a>
+          <motion.a
+            href="https://x.com/michaelsaltonn"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-2xl text-gray-300 hover:text-white transition-colors cursor-pointer relative z-10"
+          >
+            <FaTwitter />
           </motion.a>
           <motion.a
             whileHover={{ scale: 1.1 }}

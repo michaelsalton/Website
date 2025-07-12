@@ -26,7 +26,7 @@ export const projects: Project[] = [
   },
   {
     title: "Software Rasterizer",
-    description: "Custom software rasterizer built with C++ and SDL.",
+    description: "A fully-featured 3D software rasterizer from scratch using C++. This project implements a complete rendering pipeline in software, demonstrating how modern GPUs work internally without any hardware acceleration.",
     technologies: ["C++", "SDL", "Rendering"],
     githubUrl: "https://github.com/michaelsalton/Software-Rasterizer",
     liveUrl: null,

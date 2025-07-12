@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaYoutube, FaTiktok } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaYoutube, FaTiktok, FaTwitter } from 'react-icons/fa';
 import { useRef } from 'react';
 import NavigationArrows from './NavigationArrows';
 
@@ -78,6 +78,16 @@ export default function Contact() {
               className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
             >
               <FaYoutube />
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              href="https://x.com/michaelsaltonn"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
+            >
+              <FaTwitter />
             </motion.a>
             <motion.a
               whileHover={{ scale: 1.1 }}

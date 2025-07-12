@@ -5,7 +5,6 @@ import Hero from './components/Hero';
 import About from './components/About';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
-import ScrollIndicator from './components/ScrollIndicator';
 import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -19,7 +18,6 @@ export default function Home() {
   return (
     <main className={`h-screen ${inter.className} snap-y snap-mandatory overflow-y-scroll`}>
       <div className="relative z-10 h-full">
-        <ScrollIndicator />
         <Hero />
         <About />
         <Projects />

@@ -29,13 +29,13 @@ export default function Hero() {
         transition={{ duration: 0.8 }}
         className="text-center z-10 px-4"
       >
-        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-theme-light">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 text-theme-light">
           <span className="text-theme-mid">Michael</span> Salton
         </h1>
-        <p className="text-xl md:text-2xl text-theme-mid mb-8">
+        <p className="text-lg sm:text-xl md:text-2xl text-theme-mid mb-8 px-4">
           Computer Graphics & Real-time Rendering
         </p>
-        <div className="flex items-center justify-center gap-8">
+        <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 flex-wrap">
           <motion.a
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}

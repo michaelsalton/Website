@@ -88,4 +88,17 @@ body {
   scroll-snap-stop: always;
 }
 
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  /* Make snap scrolling less aggressive on mobile */
+  .snap-y {
+    scroll-snap-type: y proximity;
+  }
+  
+  /* Better scrollbar for mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+}
+
  

@@ -30,7 +30,7 @@ export default function NavigationArrows({
           onClick={onScrollUp}
         >
           <svg 
-            className="w-8 h-8 text-theme-accent/50 hover:text-theme-accent transition-colors" 
+            className="w-8 h-8 md:w-8 md:h-8 sm:w-12 sm:h-12 text-theme-accent/50 hover:text-theme-accent transition-colors" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -58,7 +58,7 @@ export default function NavigationArrows({
           onClick={onScrollDown}
         >
           <svg 
-            className="w-8 h-8 text-theme-accent/50 hover:text-theme-accent transition-colors" 
+            className="w-8 h-8 md:w-8 md:h-8 sm:w-12 sm:h-12 text-theme-accent/50 hover:text-theme-accent transition-colors" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"

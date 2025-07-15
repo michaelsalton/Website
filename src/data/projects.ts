@@ -34,6 +34,15 @@ export const projects: Project[] = [
     isHovered: false,
   },
   {
+    title: "TheRealSlimShader",
+    description: "A lightweight C++ material and shader support library built on top of SFML, designed to make shader management and material application simple and intuitive.",
+    technologies: ["C++", "GLSL", "SFML", "OpenGL"],
+    githubUrl: "https://github.com/michaelsalton/TheRealSlimShader",
+    liveUrl: null,
+    image: "/images/slimshader.gif",
+    isHovered: false,
+  },
+  {
     title: "3D Pixel Art Engine",
     description: "An innovative engine for creating and rendering 3D pixel art, combining retro aesthetics with modern techniques.",
     technologies: ["C++", "Rendering"],
@@ -62,15 +71,6 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/michaelsalton/Saga",
     liveUrl: null,
     image: "/images/saga.png",
-    isHovered: false,
-  },
-  {
-    title: "The Wild Waste",
-    description: "A post-apocalyptic game project exploring survival mechanics and environmental storytelling.",
-    technologies: ["Unity", "C#", "Game Design"],
-    githubUrl: "https://github.com/michaelsalton/The-Wild-Waste",
-    liveUrl: null,
-    image: "/images/wild.png",
     isHovered: false,
   },
   {

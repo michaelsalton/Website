@@ -19,7 +19,7 @@ export const projects: Project[] = [
     technologies: ["C++", "Cuda", "Neural Rendering"],
     githubUrl: "https://github.com/michaelsalton/SplatRender",
     liveUrl: null,
-    image: "/images/3dgs.jpg",
+    image: "/images/3dgs.png",
     isHovered: false,
   },
   {

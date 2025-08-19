@@ -13,6 +13,15 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+    {
+    title: "SplatRender",
+    description: "A high-performance 3D Gaussian Splatting renderer implemented from scratch in C++/CUDA. This project uses modern neural rendering techniques and implements the complete rasterization pipeline without dependencies on existing implementations.",
+    technologies: ["C++", "Cuda", "Neural Rendering"],
+    githubUrl: "https://github.com/michaelsalton/SplatRender",
+    liveUrl: null,
+    image: "/images/3dgs.jpg",
+    isHovered: false,
+  },
   {
     title: "Discover Old D'Hanis",
     description: "Step into the past and unravel the rich history of Old D'Hanis. Explore this 19th-century town, from Alsatian and German settlers of 1847 to Black and Mexican families post-Civil War. Unearth archival fragments, archaeological photos, and oral histories to piece together the town's alluring stories.",
@@ -34,10 +43,10 @@ export const projects: Project[] = [
     isHovered: false,
   },
   {
-    title: "TheRealSlimShader",
+    title: "SlimShader",
     description: "A lightweight C++ material and shader support library built on top of SFML, designed to make shader management and material application simple and intuitive.",
     technologies: ["C++", "GLSL", "SFML", "OpenGL"],
-    githubUrl: "https://github.com/michaelsalton/TheRealSlimShader",
+    githubUrl: "https://github.com/michaelsalton/SlimShader",
     liveUrl: null,
     image: "/images/slimshader.gif",
     isHovered: false,

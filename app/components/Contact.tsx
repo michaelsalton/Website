@@ -3,19 +3,8 @@
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaYoutube, FaTiktok, FaTwitter } from 'react-icons/fa';
 import { useRef } from 'react';
-import NavigationArrows from './NavigationArrows';
 
 export default function Contact() {
-  const scrollToProjects = () => {
-    const projectsSection = document.getElementById('projects');
-    if (projectsSection) {
-      projectsSection.scrollIntoView({ behavior: 'auto' });
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  };
 
   return (
     <section id="contact" className="min-h-screen flex items-center justify-center relative px-4 bg-theme-darker/40 backdrop-blur-sm snap-start">
@@ -102,15 +91,6 @@ export default function Contact() {
           </div>
                   </div>
         </div>
-
-        {/* Navigation Arrows */}
-        <NavigationArrows 
-          onScrollUp={scrollToProjects}
-          onScrollDown={scrollToTop}
-          showUpArrow={true}
-          showDownArrow={false}
-        />
-
 
       </section>
     );

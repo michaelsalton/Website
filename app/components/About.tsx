@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import NavigationArrows from './NavigationArrows';
 
 // This will be replaced during build time with the actual last modified date
 const LAST_MODIFIED_DATE = process.env.NODE_ENV === 'production' 
@@ -88,19 +87,6 @@ function Particles() {
 }
 
 export default function About() {
-  const scrollToHero = () => {
-    const heroSection = document.getElementById('hero');
-    if (heroSection) {
-      heroSection.scrollIntoView({ behavior: 'auto' });
-    }
-  };
-
-  const scrollToProjects = () => {
-    const projectsSection = document.getElementById('projects');
-    if (projectsSection) {
-      projectsSection.scrollIntoView({ behavior: 'auto' });
-    }
-  };
 
   return (
     <section id="about" className="min-h-screen flex items-center justify-center relative px-4 bg-theme-darker/30 snap-start">
@@ -165,15 +151,6 @@ export default function About() {
           </div>
         </motion.div>
       </div>
-
-      {/* Navigation Arrows */}
-      <NavigationArrows 
-        onScrollUp={scrollToHero}
-        onScrollDown={scrollToProjects}
-        showUpArrow={true}
-        showDownArrow={true}
-      />
-
 
     </section>
   );

@@ -6,7 +6,6 @@ import { projects } from '../../src/data/projects';
 import ProjectCard from './ProjectCard';
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 import Image from 'next/image';
-import NavigationArrows from './NavigationArrows';
 
 // New ProjectLink component
 const ProjectLink = ({ url, text }: { url: string; text: string }) => {
@@ -35,19 +34,6 @@ export default function Projects() {
     }
   }, []);
 
-  const scrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: 'auto' });
-    }
-  };
-
-  const scrollToContact = () => {
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'auto' });
-    }
-  };
 
   // Find the currently hovered project object
   const currentProject = projects.find(p => p.title === hoveredProject);
@@ -184,15 +170,6 @@ export default function Projects() {
             )}
           </div>
         </div>
-
-        {/* Navigation Arrows */}
-        <NavigationArrows 
-          onScrollUp={scrollToAbout}
-          onScrollDown={scrollToContact}
-          showUpArrow={true}
-          showDownArrow={true}
-        />
-
 
       </section>
     </>

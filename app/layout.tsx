@@ -94,7 +94,22 @@ export default function RootLayout({
                 "@type": "Occupation",
                 "name": "Computer Science Graduate Student",
                 "occupationalCategory": "15-1251.00",
-                "skills": ["Python", "C++", "OpenGL", "Machine Learning", "Computer Graphics"]
+                "skills": ["Python", "C++", "OpenGL", "Machine Learning", "Computer Graphics"],
+                "occupationLocation": {
+                  "@type": "City",
+                  "name": "Montreal"
+                },
+                "estimatedSalary": {
+                  "@type": "MonetaryAmountDistribution",
+                  "name": "Graduate Student Stipend",
+                  "currency": "CAD",
+                  "duration": "P1Y",
+                  "percentile10": "20000",
+                  "percentile25": "25000",
+                  "median": "30000",
+                  "percentile75": "35000",
+                  "percentile90": "40000"
+                }
               },
               "worksFor": {
                 "@type": "Organization",

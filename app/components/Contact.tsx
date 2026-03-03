@@ -1,97 +1,56 @@
-'use client';
-
-import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaYoutube, FaTiktok, FaTwitter } from 'react-icons/fa';
-import { useRef } from 'react';
+import { FaGithub, FaLinkedin, FaYoutube, FaTiktok, FaTwitter, FaEnvelope } from 'react-icons/fa';
 
 export default function Contact() {
-
   return (
-    <section id="contact" className="min-h-screen flex items-center justify-center relative px-4 bg-theme-darker/40 backdrop-blur-sm snap-start">
-              <div className="max-w-4xl mx-auto text-center w-full">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-theme-accent">
-          Get in Touch
-        </h2>
-        <p className="text-lg mb-12 text-gray-300">
-          I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
-        </p>
-        <div className="space-y-8">
-          <motion.a
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            href="mailto:michaeldsalton@gmail.com"
-            className="inline-block bg-theme-accent/10 text-theme-accent px-8 py-4 rounded-lg font-medium border border-theme-accent/20 hover:bg-theme-accent/20 transition-all duration-300"
-          >
-            michaeldsalton@gmail.com
-          </motion.a>
-          
-          <div className="flex items-center justify-center gap-6">
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              href="/images/michaelsalton_resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="michaelsalton_resume"
-              className="text-theme-accent hover:text-theme-accent/80 transition-colors text-lg"
-            >
-              Resume
-            </motion.a>
-            <div className="h-6 w-px bg-gray-600"></div>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              href="https://github.com/michaelsalton"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
-            >
-              <FaGithub />
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              href="https://linkedin.com/in/michael-salton"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
-            >
-              <FaLinkedin />
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              href="https://youtube.com/@michaelsalton"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
-            >
-              <FaYoutube />
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              href="https://x.com/michaelsaltonn"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
-            >
-              <FaTwitter />
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              href="https://tiktok.com/@michaelsalton"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-2xl text-theme-accent hover:text-theme-accent/80 transition-colors"
-            >
-              <FaTiktok />
-            </motion.a>
-          </div>
-                  </div>
-        </div>
-
-      </section>
-    );
-  } 
+    <section className="w-full max-w-4xl mx-auto px-6 pb-24">
+      <h2 className="font-mono text-[11px] tracking-widest uppercase text-[var(--text-secondary)] mb-6">
+        Connect
+      </h2>
+      <div className="flex flex-wrap items-center gap-4">
+        <a
+          href="https://x.com/michaelsaltonn"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors no-underline"
+        >
+          <FaTwitter className="w-5 h-5" />
+          <span className="text-sm">X</span>
+        </a>
+        <a
+          href="https://github.com/michaelsalton"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors no-underline"
+        >
+          <FaGithub className="w-5 h-5" />
+          <span className="text-sm">GitHub</span>
+        </a>
+        <a
+          href="https://www.linkedin.com/in/michaelsalton/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors no-underline"
+        >
+          <FaLinkedin className="w-5 h-5" />
+          <span className="text-sm">LinkedIn</span>
+        </a>
+        <a
+          href="https://www.youtube.com/@MichaelSalton"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors no-underline"
+        >
+          <FaYoutube className="w-5 h-5" />
+          <span className="text-sm">YouTube</span>
+        </a>
+        <a
+          href="mailto:michaeldsalton@gmail.com"
+          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors no-underline"
+        >
+          <FaEnvelope className="w-5 h-5" />
+          <span className="text-sm">Email</span>
+        </a>
+      </div>
+    </section>
+  );
+} 

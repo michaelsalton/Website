@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Space_Grotesk } from 'next/font/google';
 import './globals.css';
-import Navbar from './components/Navbar';
-import { ThemeProvider } from './context/ThemeContext';
 import Script from 'next/script';
 
-const inter = Inter({ subsets: ['latin'] });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700']
+});
 
 export const metadata: Metadata = {
   title: 'Michael Salton',
@@ -140,11 +141,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} bg-theme-darker text-theme-light min-h-screen`}>
-        <ThemeProvider>
-          <Navbar />
-          {children}
-        </ThemeProvider>
+      <body className={spaceGrotesk.className}>
+        {children}
       </body>
     </html>
   );

@@ -28,35 +28,53 @@ export default function ProjectsPage() {
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Image */}
                 <div className="relative aspect-video overflow-hidden rounded-sm bg-[var(--bg-hover)]">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                  />
+                  {project.detailUrl ? (
+                    <Link href={project.detailUrl} className="block w-full h-full">
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        className="object-cover transition-opacity hover:opacity-80"
+                      />
+                    </Link>
+                  ) : (
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover"
+                    />
+                  )}
                 </div>
 
                 {/* Content */}
                 <div className="flex flex-col">
-                  <h2 className="text-2xl font-bold mb-3">{project.title}</h2>
+                  {project.detailUrl ? (
+                    <Link href={project.detailUrl} className="no-underline hover:text-[var(--accent)] transition-colors">
+                      <h2 className="text-2xl font-bold mb-3">{project.title}</h2>
+                    </Link>
+                  ) : (
+                    <h2 className="text-2xl font-bold mb-3">{project.title}</h2>
+                  )}
                   <p className="text-[var(--text-secondary)] mb-4 leading-relaxed">
                     {project.description}
                   </p>
 
                   {/* Technologies */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="text-xs px-2 py-1 rounded-sm border border-[var(--border)] text-[var(--text-secondary)]"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="font-mono text-[11px] tracking-widest text-[var(--accent)] uppercase mb-4">
+                    {project.technologies.join(' · ')}
+                  </p>
 
                   {/* Links */}
                   <div className="flex flex-wrap gap-3 mt-auto">
+                    {project.detailUrl && (
+                      <Link
+                        href={project.detailUrl}
+                        className="text-sm text-[var(--text-primary)] transition-colors px-3 py-1.5 border border-[var(--accent)] rounded-sm hover:bg-[var(--accent)] hover:text-[var(--bg)] no-underline"
+                      >
+                        View Details
+                      </Link>
+                    )}
                     {project.githubUrl && (
                       <a
                         href={project.githubUrl}

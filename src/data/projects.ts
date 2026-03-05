@@ -10,9 +10,30 @@ export interface Project {
   liveText?: string;
   paperUrl?: string;
   paperText?: string;
+  detailUrl?: string;
 }
 
 export const projects: Project[] = [
+  {
+    title: "CLUST3R",
+    description: "GPU-accelerated spatial clustering library for 3D Gaussian Splatting assets. Implements k-means|| with a spatial hash grid for O(1) neighbor queries and adaptive cluster rebalancing — designed for integration with the GEODE pipeline.",
+    technologies: ["C++", "CUDA", "3D Gaussian Splatting"],
+    githubUrl: "https://github.com/michaelsalton/Clust3r",
+    liveUrl: null,
+    image: "/images/3dgs.png",
+    isHovered: false,
+    detailUrl: "/projects/clust3r",
+  },
+  {
+    title: "Gravel",
+    description: "A real-time procedural resurfacing framework built on Vulkan mesh shaders. Generates geometric surfaces on-the-fly at each face using the task shader → mesh shader → fragment shader pipeline, based on the Eurographics 2025 paper by Raad et al.",
+    technologies: ["C++", "Vulkan", "GLSL", "GPU Mesh Shaders"],
+    githubUrl: "https://github.com/michaelsalton/Gravel",
+    liveUrl: null,
+    image: "/images/chianmail.jpg",
+    isHovered: false,
+    detailUrl: "/projects/gravel",
+  },
     {
     title: "SplatRender",
     description: "A high-performance 3D Gaussian Splatting renderer implemented from scratch in C++/CUDA. This project uses modern neural rendering techniques and implements the complete rasterization pipeline without dependencies on existing implementations.",
@@ -21,6 +42,7 @@ export const projects: Project[] = [
     liveUrl: null,
     image: "/images/3dgs.png",
     isHovered: false,
+    detailUrl: "/projects/splatrender",
   },
   {
     title: "Discover Old D'Hanis",
@@ -31,7 +53,8 @@ export const projects: Project[] = [
     image: "/images/dod.jpg",
     isHovered: false,
     githubText: "Website",
-    liveText: "Steam"
+    liveText: "Steam",
+    detailUrl: "/projects/discover-old-dhanis",
   },
   {
     title: "Software Rasterizer",
@@ -41,6 +64,7 @@ export const projects: Project[] = [
     liveUrl: null,
     image: "/images/link.png",
     isHovered: false,
+    detailUrl: "/projects/software-rasterizer",
   },
   {
     title: "SlimShader",
@@ -50,6 +74,7 @@ export const projects: Project[] = [
     liveUrl: null,
     image: "/images/slimshader.gif",
     isHovered: false,
+    detailUrl: "/projects/slimshader",
   },
   {
     title: "3D Pixel Art Engine",
@@ -59,6 +84,7 @@ export const projects: Project[] = [
     liveUrl: null,
     image: "/images/pixel.png",
     isHovered: false,
+    detailUrl: "/projects/3d-pixel-art-engine",
   },
   {
     title: "Project Lambda",
@@ -71,7 +97,8 @@ export const projects: Project[] = [
     githubText: "GitHub",
     liveText: "Video Demo",
     paperUrl: "https://github.com/michaelsalton/ProjectLambda/blob/main/Comparing_AI_Navigation_Methods_Using_Counter_Strike__Global_Offensive.pdf",
-    paperText: "Paper"
+    paperText: "Paper",
+    detailUrl: "/projects/project-lambda",
   },
   {
     title: "Saga",
@@ -81,6 +108,7 @@ export const projects: Project[] = [
     liveUrl: null,
     image: "/images/saga.png",
     isHovered: false,
+    detailUrl: "/projects/saga",
   },
   {
     title: "misanthrope",
@@ -90,5 +118,6 @@ export const projects: Project[] = [
     liveUrl: null,
     image: "/images/mis.png",
     isHovered: false,
+    detailUrl: "/projects/misanthrope",
   }
 ]; 

@@ -9,11 +9,11 @@ export default function Projects() {
       </h2>
       <div className="space-y-1">
         {projects.slice(0, 3).map((project) => (
-          <a
+          <Link
             key={project.title}
-            href={project.liveUrl || project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={project.detailUrl || project.liveUrl || project.githubUrl}
+            target={project.detailUrl ? undefined : '_blank'}
+            rel={project.detailUrl ? undefined : 'noopener noreferrer'}
             className="flex items-baseline gap-4 py-2 no-underline group"
           >
             <span className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--text-secondary)] transition-colors">
@@ -23,7 +23,7 @@ export default function Projects() {
             <span className="text-xs text-[var(--text-secondary)] whitespace-nowrap">
               {project.technologies[0]}
             </span>
-          </a>
+          </Link>
         ))}
       </div>
       <Link

@@ -1,0 +1,20 @@
+---
+/** Responsive grid wrapper. Rendered as a list so the card count is announced. */
+interface Props {
+  /** Accessible name for the list, e.g. "Projects". */
+  label: string;
+  columns?: 2 | 3;
+}
+
+const { label, columns = 2 } = Astro.props;
+---
+
+<ul
+  aria-label={label}
+  class:list={[
+    'grid gap-4 sm:gap-5',
+    columns === 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2',
+  ]}
+>
+  <slot />
+</ul>

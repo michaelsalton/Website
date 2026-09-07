@@ -1,0 +1,38 @@
+---
+import Button from '../components/ui/Button.astro';
+import { NAV } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+{/*
+  Vercel serves this automatically for unmatched static routes. A 404 that offers real
+  navigation recovers the visit instead of ending it — hence the section links.
+  TODO (design phase): this is the natural home for something playful.
+*/}
+<BaseLayout title="Page not found" noindex>
+  <div class="mx-auto flex max-w-3xl flex-col items-start px-4 py-24 sm:px-6 sm:py-32">
+    <p class="font-mono text-sm text-accent">404</p>
+    <h1 class="mt-3 text-4xl font-bold tracking-tight text-ink sm:text-5xl">
+      That page doesn't exist
+    </h1>
+    <p class="mt-4 max-w-prose text-lg text-ink-muted">
+      The link may be out of date, or the page may have moved. Here's everything else.
+    </p>
+
+    <nav class="mt-8" aria-label="Site sections">
+      <ul class="flex flex-wrap gap-2">
+        {NAV.map((item) => (
+            <li>
+              <Button href={item.href} variant="secondary">
+                {item.label}
+              </Button>
+            </li>
+          ))}
+      </ul>
+    </nav>
+
+    <p class="mt-10">
+      <a href="/" class="text-accent hover:underline">&larr; Back home</a>
+    </p>
+  </div>
+</BaseLayout>

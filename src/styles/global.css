@@ -1,0 +1,213 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+  Tailwind v4 is configured here, in CSS. There is no tailwind.config.js — creating one
+  is a v3 habit that silently does nothing in v4.
+
+  Theming strategy: `@theme` maps Tailwind's token names onto plain CSS variables, and
+  those variables get their values in the `:root` blocks below. That means a utility
+  like `bg-surface` follows light/dark automatically, with no `dark:` prefix and no
+  flash of the wrong theme on first paint.
+*/
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Semantic colours — see the :root blocks for actual values. */
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-surface-raised: var(--c-surface-raised);
+  --color-border: var(--c-border);
+  --color-ink: var(--c-ink);
+  --color-ink-muted: var(--c-ink-muted);
+  --color-ink-subtle: var(--c-ink-subtle);
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-ink);
+
+  /* Motion. Kept as tokens so the reduced-motion block can zero them all at once. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+
+  /* Reading measure for prose. */
+  --container-prose: 68ch;
+}
+
+/* Light theme (default). */
+:root {
+  --c-canvas: oklch(99% 0.003 265);
+  --c-surface: oklch(100% 0 0);
+  --c-surface-raised: oklch(97% 0.005 265);
+  --c-border: oklch(90% 0.008 265);
+  --c-ink: oklch(22% 0.015 265);
+  --c-ink-muted: oklch(45% 0.012 265);
+  --c-ink-subtle: oklch(60% 0.01 265);
+  --c-accent: oklch(55% 0.19 265);
+  --c-accent-ink: oklch(99% 0.005 265);
+
+  color-scheme: light dark;
+}
+
+/* System dark, unless the visitor has explicitly chosen light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c-canvas: oklch(15% 0.012 265);
+    --c-surface: oklch(18% 0.014 265);
+    --c-surface-raised: oklch(22% 0.016 265);
+    --c-border: oklch(30% 0.018 265);
+    --c-ink: oklch(95% 0.008 265);
+    --c-ink-muted: oklch(72% 0.012 265);
+    --c-ink-subtle: oklch(58% 0.012 265);
+    --c-accent: oklch(72% 0.16 265);
+    --c-accent-ink: oklch(16% 0.015 265);
+  }
+}
+
+/* Explicit dark choice wins in both directions. */
+:root[data-theme="dark"] {
+  --c-canvas: oklch(15% 0.012 265);
+  --c-surface: oklch(18% 0.014 265);
+  --c-surface-raised: oklch(22% 0.016 265);
+  --c-border: oklch(30% 0.018 265);
+  --c-ink: oklch(95% 0.008 265);
+  --c-ink-muted: oklch(72% 0.012 265);
+  --c-ink-subtle: oklch(58% 0.012 265);
+  --c-accent: oklch(72% 0.16 265);
+  --c-accent-ink: oklch(16% 0.015 265);
+}
+
+/*
+  `dark:` utilities, for the rare case a semantic token isn't enough. Matches both the
+  system preference and an explicit [data-theme="dark"], so it stays in sync with the
+  variables above.
+*/
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Stops the page shifting sideways when a scrollbar appears/disappears. */
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Visible only for keyboard users, and never suppressed without a replacement. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Headings should not be orphaned from the text that follows them. */
+  :is(h1, h2, h3, h4) {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Anchors targeted by in-page links clear the sticky header. */
+  :target {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer utilities {
+  /* Screen-reader-only, but focusable — used by the skip link in BaseLayout. */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/*
+  Point @tailwindcss/typography at the semantic tokens so `prose` needs no `dark:`
+  variant and cannot drift from the rest of the site.
+*/
+.prose {
+  --tw-prose-body: var(--color-ink-muted);
+  --tw-prose-headings: var(--color-ink);
+  --tw-prose-lead: var(--color-ink-muted);
+  --tw-prose-links: var(--color-accent);
+  --tw-prose-bold: var(--color-ink);
+  --tw-prose-counters: var(--color-ink-subtle);
+  --tw-prose-bullets: var(--color-border);
+  --tw-prose-hr: var(--color-border);
+  --tw-prose-quotes: var(--color-ink);
+  --tw-prose-quote-borders: var(--color-accent);
+  --tw-prose-captions: var(--color-ink-subtle);
+  --tw-prose-code: var(--color-ink);
+  --tw-prose-th-borders: var(--color-border);
+  --tw-prose-td-borders: var(--color-border);
+
+  max-width: var(--container-prose);
+}
+
+/* Wide content must scroll inside itself rather than making the page scroll sideways. */
+.prose :is(pre, table) {
+  overflow-x: auto;
+}
+
+/*
+  Shiki emits both themes as inline CSS variables (see markdown.shikiConfig). These
+  rules pick the dark set, matching the same conditions as the colour tokens above.
+  The !important is required — Shiki writes the light values as inline styles.
+*/
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) :is(.astro-code, .astro-code span) {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}
+
+:root[data-theme="dark"] :is(.astro-code, .astro-code span) {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/*
+  Honour the OS "reduce motion" setting globally. The WebGL demos check this in JS too
+  (see src/components/demos/) because pausing a render loop can't be done in CSS.
+*/
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

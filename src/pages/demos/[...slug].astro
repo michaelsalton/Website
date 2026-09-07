@@ -1,0 +1,46 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import DemoFrame from '../../components/demos/DemoFrame.astro';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getDemos } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const demos = await getDemos();
+  return demos.map((demo) => ({
+    params: { slug: demo.id },
+    props: { demo },
+  }));
+}) satisfies GetStaticPaths;
+
+/**
+ * Maps a collection entry's `component` field to the renderer that draws it.
+ *
+ * Add an entry here alongside a new module in src/components/demos/. Keeping the map
+ * explicit (rather than a dynamic path) is what lets the build fail loudly on a typo
+ * in frontmatter instead of rendering a blank frame.
+ */
+const RENDERERS = {
+  shader: DemoFrame,
+} as const;
+
+const { demo } = Astro.props;
+const { Content } = await render(demo);
+const { title, description, component, poster, posterAlt, tech } = demo.data;
+
+const Renderer = RENDERERS[component as keyof typeof RENDERERS];
+if (!Renderer) {
+  throw new Error(
+    `Demo "${demo.id}" names component "${component}", which is not in RENDERERS ` +
+      `(known: ${Object.keys(RENDERERS).join(', ')}).`,
+  );
+}
+---
+
+<ArticleLayout title={title} description={description} eyebrow="Demo" tags={tech}>
+  <Renderer poster={poster} posterAlt={posterAlt} label={description}>
+    {title}
+  </Renderer>
+
+  <Content />
+</ArticleLayout>

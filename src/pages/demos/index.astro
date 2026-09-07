@@ -1,0 +1,31 @@
+---
+import Card from '../../components/ui/Card.astro';
+import CardGrid from '../../components/ui/CardGrid.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getDemos } from '../../lib/content';
+
+const demos = await getDemos();
+---
+
+<PageLayout
+  title="Demos"
+  description="Interactive WebGL and shader experiments that run in the browser."
+  lede="Small graphics experiments, running live in your browser."
+>
+  {demos.length === 0 ? (
+      <p class="text-ink-muted">Nothing here yet.</p>
+    ) : (
+      <CardGrid label="Demos" columns={3}>
+        {demos.map((demo) => (
+          <li>
+            <Card
+              href={`/demos/${demo.id}`}
+              title={demo.data.title}
+              description={demo.data.description}
+              tags={demo.data.tech}
+            />
+          </li>
+        ))}
+      </CardGrid>
+    )}
+</PageLayout>

@@ -1,0 +1,58 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getProjects } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, summary, role, stack, year, cover, coverAlt, repo, live } = project.data;
+---
+
+<ArticleLayout title={title} description={summary} eyebrow="Project" tags={stack}>
+  {cover && (
+      <Image
+        src={cover}
+        alt={coverAlt ?? ''}
+        class="not-prose mb-8 w-full rounded-xl border border-border"
+        widths={[480, 768, 1024]}
+        sizes="(max-width: 768px) 100vw, 768px"
+      />
+    )}
+
+  <dl class="not-prose mb-10 grid grid-cols-2 gap-4 border-y border-border py-5 text-sm">
+    <div>
+      <dt class="text-ink-subtle">Role</dt>
+      <dd class="mt-1 text-ink">{role}</dd>
+    </div>
+    <div>
+      <dt class="text-ink-subtle">Year</dt>
+      <dd class="mt-1 text-ink">{year}</dd>
+    </div>
+    {(repo || live) && (
+        <div class="col-span-2 flex gap-4">
+          {repo && (
+            <a href={repo} rel="noopener" target="_blank" class="text-accent hover:underline">
+              Source
+            </a>
+          )}
+          {live && (
+            <a href={live} rel="noopener" target="_blank" class="text-accent hover:underline">
+              Live
+            </a>
+          )}
+        </div>
+      )}
+  </dl>
+
+  <Content />
+</ArticleLayout>

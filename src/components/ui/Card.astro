@@ -1,0 +1,41 @@
+---
+/**
+ * Link card used by the project, demo and blog indexes.
+ *
+ * The whole card is one anchor rather than a div with a nested link, so it has a single
+ * tab stop and one accessible name.
+ */
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  /** Small line above the title — a year, a date, a tech label. */
+  meta?: string;
+  tags?: string[];
+}
+
+const { href, title, description, meta, tags = [] } = Astro.props;
+---
+
+<a
+  href={href}
+  class="group flex h-full flex-col rounded-xl border border-border bg-surface p-5 transition-[border-color,transform] duration-(--duration-base) ease-(--ease-out-soft) hover:-translate-y-0.5 hover:border-accent"
+>
+  {meta && <p class="mb-2 text-xs uppercase tracking-wide text-ink-subtle">{meta}</p>}
+
+  <h3 class="text-lg font-semibold text-ink transition-colors group-hover:text-accent">
+    {title}
+  </h3>
+
+  <p class="mt-2 flex-1 text-sm text-ink-muted">{description}</p>
+
+  {tags.length > 0 && (
+      <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Tags">
+        {tags.map((tag) => (
+          <li class="rounded-md bg-surface-raised px-2 py-0.5 text-xs text-ink-subtle">
+            {tag}
+          </li>
+        ))}
+      </ul>
+    )}
+</a>

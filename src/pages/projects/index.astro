@@ -1,0 +1,32 @@
+---
+import Card from '../../components/ui/Card.astro';
+import CardGrid from '../../components/ui/CardGrid.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getProjects } from '../../lib/content';
+
+const projects = await getProjects();
+---
+
+<PageLayout
+  title="Projects"
+  description="Selected engineering work — renderers, graphics, and web."
+  lede="Things I've built, and what I learned building them."
+>
+  {projects.length === 0 ? (
+      <p class="text-ink-muted">Nothing published yet.</p>
+    ) : (
+      <CardGrid label="Projects">
+        {projects.map((project) => (
+          <li>
+            <Card
+              href={`/projects/${project.id}`}
+              title={project.data.title}
+              description={project.data.summary}
+              meta={`${project.data.year} · ${project.data.role}`}
+              tags={project.data.stack}
+            />
+          </li>
+        ))}
+      </CardGrid>
+    )}
+</PageLayout>

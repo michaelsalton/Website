@@ -1,0 +1,52 @@
+---
+import Card from '../../components/ui/Card.astro';
+import CardGrid from '../../components/ui/CardGrid.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getPosts, getTags } from '../../lib/content';
+import { formatDate, slugify } from '../../lib/format';
+
+const posts = await getPosts();
+const tags = await getTags();
+---
+
+<PageLayout
+  title="Writing"
+  description="Notes on graphics programming, rendering, and web engineering."
+  lede="Notes on rendering, shaders, and building for the web."
+>
+  {tags.length > 0 && (
+      <nav class="mb-8" aria-label="Tags">
+        <ul class="flex flex-wrap gap-2">
+          {tags.map(({ tag, count }) => (
+            <li>
+              <a
+                href={`/tags/${slugify(tag)}`}
+                class="inline-block rounded-full border border-border px-3 py-1 text-xs text-ink-muted transition-colors hover:border-accent hover:text-accent"
+              >
+                {tag}
+                <span class="text-ink-subtle"> {count}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
+  {posts.length === 0 ? (
+      <p class="text-ink-muted">No posts yet.</p>
+    ) : (
+      <CardGrid label="Posts">
+        {posts.map((post) => (
+          <li>
+            <Card
+              href={`/blog/${post.id}`}
+              title={post.data.title}
+              description={post.data.description}
+              meta={formatDate(post.data.pubDate)}
+              tags={post.data.tags}
+            />
+          </li>
+        ))}
+      </CardGrid>
+    )}
+</PageLayout>

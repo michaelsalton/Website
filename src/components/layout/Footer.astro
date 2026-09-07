@@ -1,0 +1,48 @@
+---
+import { NAV, SITE, SOCIALS } from '../../consts';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-border">
+  <div
+    class="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10 text-sm text-ink-muted sm:flex-row sm:items-start sm:justify-between sm:px-6"
+  >
+    <div class="space-y-1">
+      <p class="font-medium text-ink">{SITE.title}</p>
+      <p>&copy; {year}. Built with Astro.</p>
+    </div>
+
+    <div class="flex gap-10">
+      <nav aria-label="Footer">
+        <ul class="space-y-2">
+          {NAV.map((item) => (
+              <li>
+                <a href={item.href} class="transition-colors hover:text-accent">
+                  {item.label}
+                </a>
+              </li>
+            ))}
+        </ul>
+      </nav>
+
+      <ul class="space-y-2">
+        {SOCIALS.map((social) => (
+            <li>
+              <a
+                href={social.href}
+                rel="me noopener"
+                target="_blank"
+                class="transition-colors hover:text-accent"
+              >
+                {social.label}
+              </a>
+            </li>
+          ))}
+        <li>
+          <a href="/rss.xml" class="transition-colors hover:text-accent">RSS</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>

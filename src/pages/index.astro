@@ -1,0 +1,80 @@
+---
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import CardGrid from '../components/ui/CardGrid.astro';
+import { SITE } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getFeaturedProjects, getPosts } from '../lib/content';
+import { formatDate } from '../lib/format';
+
+const featured = await getFeaturedProjects();
+const recentPosts = (await getPosts()).slice(0, 3);
+---
+
+<BaseLayout>
+  <div class="mx-auto max-w-5xl px-4 sm:px-6">
+    {/* TODO: replace with real copy. Structure is here; the words and the visual
+        treatment (glassmorphism, organic shapes, expressive type) come next. */}
+    <section class="py-20 sm:py-28">
+      <h1 class="max-w-3xl text-4xl font-bold tracking-tight text-ink sm:text-6xl">
+        {SITE.tagline}
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-ink-muted sm:text-xl">
+        I build real-time graphics and the web interfaces around them. Renderers, shaders, and fast,
+        accessible sites.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href="/projects">View projects</Button>
+        <Button href="/contact" variant="secondary">Get in touch</Button>
+      </div>
+    </section>
+
+    {featured.length > 0 && (
+        <section class="border-t border-border py-14">
+          <div class="mb-6 flex items-baseline justify-between gap-4">
+            <h2 class="text-2xl font-semibold tracking-tight text-ink">Selected work</h2>
+            <a href="/projects" class="text-sm text-accent hover:underline">
+              All projects
+            </a>
+          </div>
+
+          <CardGrid label="Selected projects">
+            {featured.map((project) => (
+              <li>
+                <Card
+                  href={`/projects/${project.id}`}
+                  title={project.data.title}
+                  description={project.data.summary}
+                  meta={`${project.data.year} · ${project.data.role}`}
+                  tags={project.data.stack}
+                />
+              </li>
+            ))}
+          </CardGrid>
+        </section>
+      )}
+
+    {recentPosts.length > 0 && (
+        <section class="border-t border-border py-14">
+          <div class="mb-6 flex items-baseline justify-between gap-4">
+            <h2 class="text-2xl font-semibold tracking-tight text-ink">Writing</h2>
+            <a href="/blog" class="text-sm text-accent hover:underline">All posts</a>
+          </div>
+
+          <CardGrid label="Recent posts">
+            {recentPosts.map((post) => (
+              <li>
+                <Card
+                  href={`/blog/${post.id}`}
+                  title={post.data.title}
+                  description={post.data.description}
+                  meta={formatDate(post.data.pubDate)}
+                  tags={post.data.tags}
+                />
+              </li>
+            ))}
+          </CardGrid>
+        </section>
+      )}
+  </div>
+</BaseLayout>

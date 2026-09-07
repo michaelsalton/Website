@@ -1,0 +1,46 @@
+---
+import Button from '../components/ui/Button.astro';
+import { SITE, SOCIALS } from '../consts';
+import PageLayout from '../layouts/PageLayout.astro';
+---
+
+<PageLayout
+  title="Contact"
+  description={`Get in touch with ${SITE.title}.`}
+  lede="Open to interesting work and good conversations."
+>
+  {/*
+    Deliberately a mailto rather than a form. A form needs a server endpoint plus spam
+    handling; a mailto works today and never breaks. When a real form is wanted:
+      1. add `export const prerender = false` to a new src/pages/api/contact.ts,
+      2. POST to it and validate server-side,
+      3. send through a provider (Resend/Postmark) with the key in a Vercel env var.
+    The Vercel adapter is already configured, so no infrastructure change is needed.
+  */}
+  <div class="max-w-prose space-y-8">
+    <p class="text-ink-muted">
+      The fastest way to reach me is email. I read everything and reply to anything that isn't a
+      template.
+    </p>
+
+    <div class="flex flex-wrap gap-3">
+      <Button href={`mailto:${SITE.email}`}>Email me</Button>
+      {SOCIALS.map((social) => (
+          <Button href={social.href} variant="secondary" rel="me noopener" target="_blank">
+            {social.label}
+          </Button>
+        ))}
+    </div>
+
+    <dl class="space-y-2 border-t border-border pt-6 text-sm">
+      <div class="flex gap-2">
+        <dt class="text-ink-subtle">Email</dt>
+        <dd>
+          <a href={`mailto:${SITE.email}`} class="text-accent hover:underline">
+            {SITE.email}
+          </a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</PageLayout>

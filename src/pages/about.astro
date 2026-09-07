@@ -1,0 +1,31 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+
+<PageLayout
+  title="About"
+  description="Background, focus, and how I work."
+  lede="Graphics programming, rendering, and the web."
+>
+  {/* TODO: real biography. Keep it short and specific — what you build, what you're
+      good at, what you want to be asked about. */}
+  <div class="prose prose-lg">
+    <p>
+      I work on real-time graphics and the tooling around it — renderers, shaders, and the
+      interfaces that make them usable.
+    </p>
+
+    <h2>Focus</h2>
+    <ul>
+      <li>Real-time rendering and shader work (OpenGL, WebGL, GLSL)</li>
+      <li>Offline rendering and ray tracing</li>
+      <li>Performance-minded front-end engineering</li>
+    </ul>
+
+    <h2>Elsewhere</h2>
+    <p>
+      Code on <a href="https://github.com/michaelsalton">GitHub</a>, or
+      <a href="/contact">send me a message</a>.
+    </p>
+  </div>
+</PageLayout>

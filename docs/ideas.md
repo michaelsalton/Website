@@ -1,0 +1,21 @@
+- glassmorphism
+- organic shapes
+- webgl
+- custom cursor
+- taste skill
+- awesome design skill
+- playwrite cli skill
+- proper typography and color theme
+- interactive elements
+- hidden navigation
+- custom 404 page
+- internal links
+- robots.txt
+- alt txt on images
+- local schema
+- 3D scrolling
+- Expressive typography
+- huge footer
+- Lighting effects
+- Bold tpography
+- UI sounds

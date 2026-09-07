@@ -1,0 +1,39 @@
+---
+/**
+ * schema.org Person + WebSite structured data (JSON-LD).
+ *
+ * This is what lets search engines associate the site with a person rather than an
+ * anonymous page, and is what powers the knowledge-panel style result. Validate any
+ * change against https://validator.schema.org/ — a malformed graph is ignored silently.
+ */
+import { SITE, SOCIALS } from '../../consts';
+
+const siteUrl = Astro.site?.href ?? '/';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${siteUrl}#person`,
+      name: SITE.title,
+      url: siteUrl,
+      email: `mailto:${SITE.email}`,
+      jobTitle: SITE.tagline,
+      description: SITE.description,
+      sameAs: SOCIALS.map((s) => s.href),
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}#website`,
+      url: siteUrl,
+      name: SITE.title,
+      description: SITE.description,
+      inLanguage: SITE.lang,
+      publisher: { '@id': `${siteUrl}#person` },
+    },
+  ],
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />

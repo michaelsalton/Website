@@ -1,0 +1,26 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = {
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+} & Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'href' | 'type'>;
+
+const { href, type = 'button', class: className, ...rest } = Astro.props;
+
+const classes = [
+  'pill-btn inline-flex items-center justify-center rounded-full bg-surface-sunken px-5 py-2 text-label uppercase text-content-subtle font-medium transition-all duration-(--duration-base)',
+  'hover:scale-105 hover:shadow-[0_8px_20px_-4px_color-mix(in_oklab,var(--ink-900)_25%,transparent)] active:scale-100',
+  className,
+];
+---
+
+{href ? (
+  <a href={href} class:list={classes} {...rest}>
+    <slot />
+  </a>
+) : (
+  <button type={type} class:list={classes} {...rest}>
+    <slot />
+  </button>
+)}

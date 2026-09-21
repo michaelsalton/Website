@@ -1,48 +1,22 @@
 ---
-import { NAV, SITE, SOCIALS } from '../../consts';
+import { SITE } from '../../consts';
+import SocialLinkTextStack from '../ui/SocialLinkTextStack.astro';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-24 border-t border-border">
-  <div
-    class="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10 text-sm text-ink-muted sm:flex-row sm:items-start sm:justify-between sm:px-6"
-  >
-    <div class="space-y-1">
-      <p class="font-medium text-ink">{SITE.title}</p>
-      <p>&copy; {year}. Built with Astro.</p>
-    </div>
-
-    <div class="flex gap-10">
-      <nav aria-label="Footer">
-        <ul class="space-y-2">
-          {NAV.map((item) => (
-              <li>
-                <a href={item.href} class="transition-colors hover:text-accent">
-                  {item.label}
-                </a>
-              </li>
-            ))}
-        </ul>
-      </nav>
-
-      <ul class="space-y-2">
-        {SOCIALS.map((social) => (
-            <li>
-              <a
-                href={social.href}
-                rel="me noopener"
-                target="_blank"
-                class="transition-colors hover:text-accent"
-              >
-                {social.label}
-              </a>
-            </li>
-          ))}
-        <li>
-          <a href="/rss.xml" class="transition-colors hover:text-accent">RSS</a>
-        </li>
-      </ul>
-    </div>
+<footer
+  id="footer"
+  class="on-inverse bg-surface-inverse min-h-screen flex flex-col items-center justify-end gap-8 py-8"
+>
+  <div class="flex flex-col items-center gap-4">
+    <a
+      href={`mailto:${SITE.email}`}
+      class="text-body text-content-inverse hover:text-accent-soft transition-colors"
+    >
+      {SITE.email}
+    </a>
+    <SocialLinkTextStack />
   </div>
+  <p class="text-center text-caption text-content-inverse-muted">&copy; {year} {SITE.title}.</p>
 </footer>

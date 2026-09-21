@@ -26,8 +26,8 @@ const projects = defineCollection({
         // Zod 4 style: top-level z.url(), not the deprecated z.string().url().
         repo: z.url().optional(),
         live: z.url().optional(),
-        /** Surfaced on the homepage. */
-        featured: z.boolean().default(false),
+        /** Optional external link shown as a pill button at the bottom of the show card. */
+        link: z.url().optional(),
         /** Lower sorts first on the index; ties fall back to year descending. */
         order: z.number().default(0),
         ...draftable,
@@ -40,35 +40,4 @@ const projects = defineCollection({
       }),
 });
 
-const posts = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    pubDate: z.coerce.date(),
-    updatedDate: z.coerce.date().optional(),
-    tags: z.array(z.string()).default([]),
-    ...draftable,
-  }),
-});
-
-const demos = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/demos' }),
-  schema: ({ image }) =>
-    z.object({
-      title: z.string(),
-      description: z.string(),
-      /**
-       * Filename (without extension) of the island in src/components/demos/ that renders
-       * this demo. Resolved at build time — see src/lib/demos.ts.
-       */
-      component: z.string(),
-      /** Shown before the island hydrates, and as the OG image. */
-      poster: image().optional(),
-      posterAlt: z.string().optional(),
-      tech: z.array(z.string()).default([]),
-      ...draftable,
-    }),
-});
-
-export const collections = { projects, posts, demos };
+export const collections = { projects };

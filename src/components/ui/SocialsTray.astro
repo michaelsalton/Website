@@ -1,0 +1,26 @@
+---
+import { SOCIALS } from '../../consts';
+import SocialIcon from './SocialIcon.astro';
+
+interface Props {
+  class?: string;
+  style?: string;
+}
+
+const { class: className, ...attrs } = Astro.props;
+---
+
+<ul
+  class:list={[
+    'inline-flex flex-col items-center gap-2 rounded-xl bg-surface-sunken px-1.5 py-3',
+    className,
+  ]}
+  aria-label="Social links"
+  {...attrs}
+>
+  {SOCIALS.map((s) => (
+    <li>
+      <SocialIcon href={s.href} label={s.label} />
+    </li>
+  ))}
+</ul>

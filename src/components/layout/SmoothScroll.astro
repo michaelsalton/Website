@@ -1,0 +1,72 @@
+---
+/**
+ * Global smooth-scroll via Lenis. Included once in BaseLayout so every page
+ * gets momentum scrolling. Disabled entirely when the OS requests reduced motion.
+ */
+---
+
+<script>
+import Lenis from 'lenis';
+
+const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+let lenis: Lenis | null = null;
+let raf: number | null = null;
+
+let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+
+function showScrollbar() {
+  document.documentElement.setAttribute('data-scrolling', '');
+  if (scrollTimer) clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => {
+    document.documentElement.removeAttribute('data-scrolling');
+  }, 1200);
+}
+
+function start() {
+  if (lenis) return;
+  lenis = new Lenis();
+  (window as any).__lenis = lenis;
+  lenis.on('scroll', showScrollbar);
+
+  function tick(time: number) {
+    lenis?.raf(time);
+    raf = requestAnimationFrame(tick);
+  }
+
+  raf = requestAnimationFrame(tick);
+}
+
+function stop() {
+  if (raf !== null) cancelAnimationFrame(raf);
+  raf = null;
+  if (scrollTimer) clearTimeout(scrollTimer);
+  scrollTimer = null;
+  document.documentElement.removeAttribute('data-scrolling');
+  lenis?.destroy();
+  lenis = null;
+}
+
+function startFallbackScroll() {
+  window.addEventListener('scroll', showScrollbar, { passive: true });
+}
+
+function stopFallbackScroll() {
+  window.removeEventListener('scroll', showScrollbar);
+}
+
+if (!mq.matches) {
+  start();
+} else {
+  startFallbackScroll();
+}
+
+mq.addEventListener('change', (e) => {
+  if (e.matches) {
+    stop();
+    startFallbackScroll();
+  } else {
+    stopFallbackScroll();
+    start();
+  }
+});
+</script>

@@ -1,39 +1,171 @@
 ---
-import { NAV, SITE } from '../../consts';
+import { NAV } from '../../consts';
+import Button from '../ui/Button.astro';
 
-// Mark the active section so the nav reflects where you are. Compares the first path
-// segment so /blog/some-post still highlights "Writing".
-const section = `/${Astro.url.pathname.split('/').filter(Boolean)[0] ?? ''}`;
+interface Props {
+  /** When true the header starts transparent over the hero and solidifies on scroll. */
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+
+// Nav items are hash anchors on the homepage (e.g. /#about). Active state is handled
+// client-side via IntersectionObserver since we can't know scroll position at build time.
 ---
 
-<header class="sticky top-0 z-50 border-b border-border bg-canvas/80 backdrop-blur-md">
-  <div class="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
-    <a href="/" class="font-semibold tracking-tight text-ink transition-colors hover:text-accent">
-      {SITE.title}
-    </a>
-
-    <nav aria-label="Main">
-      <ul class="flex items-center gap-1 text-sm sm:gap-2">
-        {NAV.map((item) => {
-            const isActive = section === item.href;
-            return (
+<header
+  class="fixed top-0 right-0 z-50 font-display bg-transparent transition-[color,background-color,border-color,backdrop-filter,transform] duration-(--duration-base) ease-(--ease-out-soft)"
+  {...overlay ? { 'data-hero-overlay': 'true' } : {}}
+>
+  <div class="flex items-start justify-end px-6 pt-12 sm:px-10">
+    {/* Desktop nav — hidden on mobile */}
+    <nav aria-label="Main" class="reveal-from-right hidden sm:block">
+      <ul class="flex flex-col items-end gap-0 text-micro uppercase">
+        {NAV.map((item) => (
               <li>
-                <a
+                <Button
                   href={item.href}
-                  aria-current={isActive ? 'page' : undefined}
-                  class:list={[
-                    'rounded-md px-2 py-1.5 transition-colors sm:px-3',
-                    isActive
-                      ? 'bg-surface-raised font-medium text-ink'
-                      : 'text-ink-muted hover:text-ink',
-                  ]}
+                  variant="text"
+                  data-nav-section={new URL(item.href, 'https://x').hash.slice(1)}
+                  class="nav-link rounded-md py-1.5 sm:px-3 text-content-subtle"
                 >
                   {item.label}
-                </a>
+                </Button>
               </li>
-            );
-          })}
+            ))}
       </ul>
     </nav>
+
+    {/* Mobile hamburger toggle — visible below sm */}
+    <button
+      type="button"
+      data-nav-toggle
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+      aria-label="Menu"
+      class="inline-flex items-center justify-center rounded-md p-2 text-content transition-colors duration-(--duration-fast) hover:text-accent sm:hidden"
+    >
+      <svg
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        {/* Three bars that CSS rotates into an X when aria-expanded="true" */}
+        <line class="nav-bar nav-bar-top" x1="4" y1="6" x2="20" y2="6"></line>
+        <line class="nav-bar nav-bar-mid" x1="4" y1="12" x2="20" y2="12"></line>
+        <line class="nav-bar nav-bar-bot" x1="4" y1="18" x2="20" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  {/* Mobile nav panel — collapses with grid-rows animation */}
+  <div id="mobile-nav" data-nav-panel class="nav-panel border-line bg-surface sm:hidden">
+    <div class="overflow-hidden">
+      <nav class="mx-auto max-w-5xl px-4 pb-4">
+        <ul class="flex flex-col gap-1 text-caption uppercase">
+          {NAV.map((item) => (
+                <li>
+                  <Button
+                    href={item.href}
+                    variant="text"
+                    data-nav-section={new URL(item.href, 'https://x').hash.slice(1)}
+                    class="nav-link w-full justify-start rounded-md py-3 text-content-subtle"
+                  >
+                    {item.label}
+                  </Button>
+                </li>
+              ))}
+        </ul>
+      </nav>
+    </div>
   </div>
 </header>
+
+<script>
+function initHeader() {
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+  const header = document.querySelector<HTMLElement>('header');
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      panel.classList.toggle('nav-panel-open', !isOpen);
+
+      if (isOpen) {
+        panel.removeAttribute('aria-expanded');
+      } else {
+        panel.setAttribute('aria-expanded', 'true');
+      }
+    });
+  }
+
+  // Scroll-aware overlay: solidify the header after scrolling past 64px.
+  const hasOverlay = header?.hasAttribute('data-hero-overlay');
+  if (hasOverlay && header) {
+    const updateOverlay = () => {
+      if (window.scrollY > 64) {
+        header.removeAttribute('data-hero-overlay');
+      } else {
+        header.setAttribute('data-hero-overlay', 'true');
+      }
+    };
+    window.addEventListener('scroll', updateOverlay, { passive: true });
+    updateOverlay();
+  }
+
+  // Close mobile nav when a link is clicked (hash navigation stays on page).
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
+  if (toggle && panel) {
+    for (const link of navLinks) {
+      link.addEventListener('click', () => {
+        toggle.setAttribute('aria-expanded', 'false');
+        panel.classList.remove('nav-panel-open');
+        panel.removeAttribute('aria-expanded');
+      });
+    }
+  }
+
+  // Highlight the nav link whose section is currently in view (homepage only).
+  const ACTIVE = '!text-content';
+  const sections = document.querySelectorAll<HTMLElement>('section[id], footer[id]');
+
+  if (sections.length > 0) {
+    const setActive = (id: string) => {
+      for (const link of navLinks) {
+        const match = link.dataset.navSection === id;
+        if (match) {
+          link.classList.add(...ACTIVE.split(' '));
+          link.setAttribute('aria-current', 'true');
+        } else {
+          link.classList.remove(...ACTIVE.split(' '));
+          link.removeAttribute('aria-current');
+        }
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: '-20% 0px -60% 0px' },
+    );
+
+    for (const section of sections) observer.observe(section);
+  }
+}
+
+// Run on initial load and after Astro client-side navigations.
+initHeader();
+document.addEventListener('astro:after-swap', initHeader);
+</script>

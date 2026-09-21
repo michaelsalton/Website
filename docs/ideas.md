@@ -19,3 +19,4 @@
 - Lighting effects
 - Bold tpography
 - UI sounds
+- Lenis

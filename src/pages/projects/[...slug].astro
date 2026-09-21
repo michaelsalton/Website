@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
+import Button from '../../components/ui/Button.astro';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import { getProjects } from '../../lib/content';
 
@@ -23,32 +24,32 @@ const { title, summary, role, stack, year, cover, coverAlt, repo, live } = proje
       <Image
         src={cover}
         alt={coverAlt ?? ''}
-        class="not-prose mb-8 w-full rounded-xl border border-border"
+        class="not-prose mb-8 w-full rounded-xl border border-line"
         widths={[480, 768, 1024]}
         sizes="(max-width: 768px) 100vw, 768px"
       />
     )}
 
-  <dl class="not-prose mb-10 grid grid-cols-2 gap-4 border-y border-border py-5 text-sm">
+  <dl class="not-prose mb-10 grid grid-cols-2 gap-4 border-y border-line py-5 text-caption">
     <div>
-      <dt class="text-ink-subtle">Role</dt>
-      <dd class="mt-1 text-ink">{role}</dd>
+      <dt class="text-content-subtle">Role</dt>
+      <dd class="mt-1 text-content">{role}</dd>
     </div>
     <div>
-      <dt class="text-ink-subtle">Year</dt>
-      <dd class="mt-1 text-ink">{year}</dd>
+      <dt class="text-content-subtle">Year</dt>
+      <dd class="mt-1 text-content">{year}</dd>
     </div>
     {(repo || live) && (
         <div class="col-span-2 flex gap-4">
           {repo && (
-            <a href={repo} rel="noopener" target="_blank" class="text-accent hover:underline">
+            <Button href={repo} variant="underline" rel="noopener" target="_blank">
               Source
-            </a>
+            </Button>
           )}
           {live && (
-            <a href={live} rel="noopener" target="_blank" class="text-accent hover:underline">
+            <Button href={live} variant="underline" rel="noopener" target="_blank">
               Live
-            </a>
+            </Button>
           )}
         </div>
       )}

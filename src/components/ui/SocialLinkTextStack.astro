@@ -1,0 +1,18 @@
+---
+import { SOCIALS } from '../../consts';
+
+const linkSocials = SOCIALS.filter((s) => s.label !== 'Email');
+---
+
+<nav class="flex flex-col items-center" aria-label="Social links">
+  {linkSocials.map((social) => (
+    <a
+      href={social.href}
+      class="text-body text-content-inverse hover:text-accent-soft transition-colors"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {social.label}
+    </a>
+  ))}
+</nav>

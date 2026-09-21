@@ -1,5 +1,6 @@
 // @ts-check
 import mdx from '@astrojs/mdx';
+import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
@@ -17,22 +18,40 @@ export default defineConfig({
   // without converting the whole site to SSR.
   adapter: vercel(),
 
-  integrations: [mdx(), sitemap()],
+  // /styles is the internal design reference and is marked noindex — listing it in the
+  // sitemap would tell crawlers to fetch a page we've asked them not to index.
+  integrations: [react(), mdx(), sitemap({ filter: (page) => !/\/styles\/?$/.test(page) })],
 
   // Self-hosted, subset, and metrics-matched automatically: no layout shift, no
   // third-party request to fonts.googleapis.com.
   //
   // Deliberately no `preload`. Each entry below expands to one file per weight/style
-  // combination, so preloading Inter would fire six font requests during first paint.
-  // Browsers fetch only the faces text actually uses, and Astro's generated fallback
-  // metrics hold the layout steady until they arrive — so on-demand wins here.
+  // combination — nine files in total (Inter 3x2, Space Grotesk 2, JetBrains Mono 1) —
+  // so preloading would fire nine font requests during first paint. Browsers fetch only
+  // the faces text actually uses, and Astro's generated fallback metrics hold the layout
+  // steady until they arrive, so on-demand wins here.
   fonts: [
     {
+      // Body face. 500 is loaded because `font-medium` is genuinely used; 700 is not,
+      // because after the typography pass every bold thing is a heading and headings are
+      // Space Grotesk. Asking for an unloaded weight means synthesized fake bold.
       provider: fontProviders.fontsource(),
       name: 'Inter',
       cssVariable: '--font-inter',
-      weights: [400, 600, 700],
+      weights: [400, 500, 600],
       styles: ['normal', 'italic'],
+      subsets: ['latin'],
+      fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+    },
+    {
+      // Display face, bound to h1–h6 in global.css. Oswald is a condensed grotesque
+      // with no italic. Only the two weights the ladder asks for (h2/h3 600,
+      // h1/display 700).
+      provider: fontProviders.fontsource(),
+      name: 'Oswald',
+      cssVariable: '--font-oswald',
+      weights: [600, 700],
+      styles: ['normal'],
       subsets: ['latin'],
       fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
     },
@@ -48,10 +67,20 @@ export default defineConfig({
   ],
 
   markdown: {
-    // Dual themes so code blocks follow the OS colour scheme via CSS variables,
-    // with no JS theme switcher and no flash of the wrong theme.
+    // One Shiki theme, because the site has one theme. `poimandres` is teal/aqua/pink,
+    // which sits on-palette, and is bundled with the Shiki that Astro ships.
+    //
+    // TRAP: `themes` beats `theme` whenever it is non-empty — see the
+    // `Object.values(themes).length ? { themes } : { theme }` line in
+    // @astrojs/internal-helpers/dist/shiki.js. Adding `theme:` *alongside* a `themes:`
+    // key changes nothing and emits no warning, so the key has to be removed rather
+    // than overridden.
+    //
+    // With a single theme Shiki writes literal hex as inline styles instead of CSS
+    // variables, so the panel background is re-grounded via `.astro-code` in
+    // src/styles/global.css.
     shikiConfig: {
-      themes: { light: 'github-light', dark: 'github-dark' },
+      theme: 'poimandres',
       wrap: true,
     },
   },

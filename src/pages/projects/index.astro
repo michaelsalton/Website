@@ -8,14 +8,14 @@ const projects = await getProjects();
 ---
 
 <PageLayout
-  title="Projects"
+  title="Work"
   description="Selected engineering work — renderers, graphics, and web."
   lede="Things I've built, and what I learned building them."
 >
   {projects.length === 0 ? (
-      <p class="text-ink-muted">Nothing published yet.</p>
+      <p class="text-content-muted">Nothing published yet.</p>
     ) : (
-      <CardGrid label="Projects">
+      <CardGrid label="Work">
         {projects.map((project) => (
           <li>
             <Card

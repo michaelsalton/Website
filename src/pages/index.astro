@@ -1,80 +1,125 @@
 ---
+import AboutSection from '../components/ui/AboutSection.astro';
 import Button from '../components/ui/Button.astro';
-import Card from '../components/ui/Card.astro';
-import CardGrid from '../components/ui/CardGrid.astro';
+import ProjectsShowcase from '../components/ui/ProjectsShowcase.astro';
+import SocialsTray from '../components/ui/SocialsTray.astro';
 import { SITE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getFeaturedProjects, getPosts } from '../lib/content';
-import { formatDate } from '../lib/format';
-
-const featured = await getFeaturedProjects();
-const recentPosts = (await getPosts()).slice(0, 3);
 ---
 
 <BaseLayout>
-  <div class="mx-auto max-w-5xl px-4 sm:px-6">
-    {/* TODO: replace with real copy. Structure is here; the words and the visual
-        treatment (glassmorphism, organic shapes, expressive type) come next. */}
-    <section class="py-20 sm:py-28">
-      <h1 class="max-w-3xl text-4xl font-bold tracking-tight text-ink sm:text-6xl">
-        {SITE.tagline}
+  {/* ── Hero ── full viewport, vertically stacked identity block ─────────── */}
+  <section
+    id="hero"
+    class="relative flex min-h-dvh flex-col items-center justify-between bg-surface-raised px-4 pt-28 pb-12 sm:px-6"
+  >
+    {/* Location + email */}
+    <div class="hero-pop-in reveal-from-top text-center" style="--pop-idx: 0;">
+      <p class="text-label text-content uppercase">Montreal</p>
+      <a
+        href={`mailto:${SITE.email}`}
+        class="text-caption text-content-subtle hover:text-accent transition-colors"
+        >{SITE.email}</a
+      >
+    </div>
+
+    {/* Name → role */}
+    <div class="flex flex-col items-end -mt-12 sm:-mt-16">
+      <h1
+        class="hero-pop-in text-display text-content text-center uppercase w-full"
+        style="--pop-idx: 1;"
+      >
+        {SITE.title}
       </h1>
-      <p class="mt-6 max-w-2xl text-lg text-ink-muted sm:text-xl">
-        I build real-time graphics and the web interfaces around them. Renderers, shaders, and fast,
-        accessible sites.
+
+      {/* Role subtitle */}
+      <p
+        class="hero-pop-in text-h2 font-normal text-content-faint uppercase mt-10 sm:mt-14"
+        style="--pop-idx: 2;"
+      >
+        Software Developer,<br>Computer Graphics,<br>Real-Time Rendering,<br>GPU Systems
       </p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <Button href="/projects">View projects</Button>
-        <Button href="/contact" variant="secondary">Get in touch</Button>
-      </div>
-    </section>
 
-    {featured.length > 0 && (
-        <section class="border-t border-border py-14">
-          <div class="mb-6 flex items-baseline justify-between gap-4">
-            <h2 class="text-2xl font-semibold tracking-tight text-ink">Selected work</h2>
-            <a href="/projects" class="text-sm text-accent hover:underline">
-              All projects
-            </a>
-          </div>
+      <Button
+        href={`mailto:${SITE.email}`}
+        target="_blank"
+        class="hero-pop-in mt-14 self-center"
+        style="--pop-idx: 3;"
+      >
+        Contact Me
+      </Button>
+    </div>
 
-          <CardGrid label="Selected projects">
-            {featured.map((project) => (
-              <li>
-                <Card
-                  href={`/projects/${project.id}`}
-                  title={project.data.title}
-                  description={project.data.summary}
-                  meta={`${project.data.year} · ${project.data.role}`}
-                  tags={project.data.stack}
-                />
-              </li>
-            ))}
-          </CardGrid>
-        </section>
-      )}
+    {/* Interests */}
+    <div class="hero-pop-in reveal-from-bottom text-center" style="--pop-idx: 4;">
+      <p class="text-label text-content uppercase">Working On</p>
+      <p class="text-caption text-content-subtle mt-2 uppercase">
+        <a
+          href="/projects"
+          data-show-project="discover-old-dhanis"
+          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
+          >Discover Old D'Hanis</a
+        >{", "}
+        <a
+          href="/projects"
+          data-show-project="saga"
+          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
+          >Saga</a
+        >{", "}
+        <a
+          href="/projects"
+          data-show-project="gravel"
+          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
+          >Gravel</a
+        >{", "}
+        <a
+          href="/projects"
+          data-show-project="remolod"
+          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
+          >RemoLOD</a
+        >{", "}
+        <a
+          href="/projects"
+          data-show-project="thinkcam"
+          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
+          >ThinkCAM</a
+        >
+      </p>
+    </div>
 
-    {recentPosts.length > 0 && (
-        <section class="border-t border-border py-14">
-          <div class="mb-6 flex items-baseline justify-between gap-4">
-            <h2 class="text-2xl font-semibold tracking-tight text-ink">Writing</h2>
-            <a href="/blog" class="text-sm text-accent hover:underline">All posts</a>
-          </div>
+    <SocialsTray
+      data-socials-tray
+      class="hero-pop-in reveal-from-left fixed bottom-6 left-6 z-50 transition-[transform,opacity] duration-(--duration-base) ease-(--ease-out-soft)"
+      style="--pop-idx: 5;"
+    />
+  </section>
 
-          <CardGrid label="Recent posts">
-            {recentPosts.map((post) => (
-              <li>
-                <Card
-                  href={`/blog/${post.id}`}
-                  title={post.data.title}
-                  description={post.data.description}
-                  meta={formatDate(post.data.pubDate)}
-                  tags={post.data.tags}
-                />
-              </li>
-            ))}
-          </CardGrid>
-        </section>
-      )}
-  </div>
+  {/* ── About ── full viewport intro below the hero ──────────────────────── */}
+  <AboutSection />
+
+  {/* ── Projects showcase ── typographic title list ─────────────────────── */}
+  <ProjectsShowcase />
 </BaseLayout>
+
+<script>
+const tray = document.querySelector<HTMLElement>('[data-socials-tray]');
+const footer = document.querySelector<HTMLElement>('#footer');
+
+if (tray && footer) {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        tray.style.transform = 'translateX(calc(-100% - 1.5rem))';
+        tray.style.opacity = '0';
+        tray.style.pointerEvents = 'none';
+      } else {
+        tray.style.transform = '';
+        tray.style.opacity = '';
+        tray.style.pointerEvents = '';
+      }
+    },
+    { threshold: 0 },
+  );
+  observer.observe(footer);
+}
+</script>

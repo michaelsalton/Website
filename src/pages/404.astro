@@ -11,11 +11,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 */}
 <BaseLayout title="Page not found" noindex>
   <div class="mx-auto flex max-w-3xl flex-col items-start px-4 py-24 sm:px-6 sm:py-32">
-    <p class="font-mono text-sm text-accent">404</p>
-    <h1 class="mt-3 text-4xl font-bold tracking-tight text-ink sm:text-5xl">
-      That page doesn't exist
-    </h1>
-    <p class="mt-4 max-w-prose text-lg text-ink-muted">
+    <p class="font-mono text-caption text-highlight">404</p>
+    <h1 class="mt-3 text-h1 text-content">That page doesn't exist</h1>
+    <p class="mt-4 max-w-prose text-body text-content-muted">
       The link may be out of date, or the page may have moved. Here's everything else.
     </p>
 
@@ -23,7 +21,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <ul class="flex flex-wrap gap-2">
         {NAV.map((item) => (
             <li>
-              <Button href={item.href} variant="secondary">
+              <Button href={item.href} variant="underline">
                 {item.label}
               </Button>
             </li>
@@ -32,7 +30,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </nav>
 
     <p class="mt-10">
-      <a href="/" class="text-accent hover:underline">&larr; Back home</a>
+      <Button href="/" variant="underline">&larr; Back home</Button>
     </p>
   </div>
 </BaseLayout>

@@ -1,0 +1,428 @@
+---
+/**
+ * Living reference for the colour and type systems.
+ *
+ * Values are parsed out of global.css at build time rather than retyped, for two
+ * reasons: a style guide that can drift from the stylesheet is worse than none, and
+ * hardcoding ~35 hex literals here would permanently break the project's own
+ * "no hardcoded colours" grep (see AGENTS.md).
+ *
+ * The semantic lists below ARE hand-written, because each chip and each specimen needs a
+ * literal Tailwind class. Build-time assertions cross-check them against the stylesheet,
+ * so adding a token without documenting it fails the build instead of silently going
+ * stale — the same guarantee for `--text-*` as for `--color-*`.
+ */
+import Button from '../components/ui/Button.astro';
+import Swatch from '../components/ui/Swatch.astro';
+import PageLayout from '../layouts/PageLayout.astro';
+import globalCss from '../styles/global.css?raw';
+
+// ── Parse the stylesheet ────────────────────────────────────────────────────────────
+
+// Palette tiers, e.g. `--aqua-600: oklch(48% 0.08 203);` followed by its sRGB comment.
+const palette = [
+  ...globalCss.matchAll(/--([a-z]+-\d{3}):\s*(oklch\([^)]*\));[^\n]*?(#[0-9a-f]{6})/gi),
+].map(([, name, value, hex]) => ({ name, value, hex }));
+
+// Semantic tokens, e.g. `--color-accent: var(--aqua-600);`. The `:` immediately after
+// the name is what keeps this from also matching every `var(--color-…)` reference.
+const declared = new Map(
+  [...globalCss.matchAll(/--color-([a-z-]+):\s*([^;]+);/g)].map(([, name, value]) => [
+    name,
+    value.trim(),
+  ]),
+);
+
+if (palette.length === 0 || declared.size === 0) {
+  throw new Error('styles.astro parsed no colours out of global.css — check the regexes.');
+}
+
+// ── Parse the type ladder ───────────────────────────────────────────────────────────
+
+// Role tokens, e.g. `--text-h1: var(--step-h1);` or `--text-micro: 0.75rem;`. Requiring
+// the value to be a step var or a bare rem is what excludes the `--text-h1--line-height`
+// sub-properties (whose values are unitless numbers, em, or a weight) from matching.
+const roleNames = [
+  ...globalCss.matchAll(/--text-([a-z0-9-]+):\s*(?:var\(--step-[a-z0-9-]+\)|[\d.]+rem);/g),
+].map(([, name]) => name);
+
+/** One `--text-<role>--<prop>` sub-property, straight from the stylesheet. */
+const subProperty = (role: string, prop: string): string =>
+  globalCss.match(new RegExp(`--text-${role}--${prop}:\\s*([^;]+);`))?.[1].trim() ?? '';
+
+/**
+ * Every value a `--step-*` var takes, in stylesheet order — which is mobile, then the
+ * 48rem block, then the 64rem block. Roles with a constant size have no step var and
+ * return an empty list.
+ */
+const rampFor = (role: string): string[] => {
+  const step = globalCss.match(new RegExp(`--text-${role}:\\s*var\\(--(step-[a-z-]+)\\);`))?.[1];
+  if (!step) return [];
+  return [...globalCss.matchAll(new RegExp(`--${step}:\\s*([^;]+);`, 'g'))].map(([, v]) =>
+    v.trim(),
+  );
+};
+
+if (roleNames.length === 0) {
+  throw new Error('styles.astro parsed no type roles out of global.css — check the regex.');
+}
+
+// ── The semantic layer, with a literal class per chip ────────────────────────────────
+
+interface Chip {
+  token: string;
+  role: string;
+  base?: string;
+  under?: string;
+  sample?: string;
+}
+
+const SURFACES: Chip[] = [
+  { token: 'surface', base: 'bg-surface', role: 'page ground' },
+  { token: 'surface-sunken', base: 'bg-surface-sunken', role: 'tag chips, demo frame' },
+  { token: 'surface-raised', base: 'bg-surface-raised', role: 'cards — white lifts off the cream' },
+  { token: 'surface-inverse', base: 'bg-surface-inverse', role: 'footer band, code panels' },
+  {
+    token: 'overlay',
+    base: 'bg-overlay',
+    under: 'bg-accent-soft',
+    role: 'controls floating over imagery',
+  },
+  {
+    token: 'overlay-hover',
+    base: 'bg-overlay-hover',
+    under: 'bg-accent-soft',
+    role: 'its hover — a separate token, because an alpha modifier would compound',
+  },
+];
+
+const BRAND: Chip[] = [
+  { token: 'accent', base: 'bg-accent', role: 'links, primary button, card hover border' },
+  { token: 'accent-hover', base: 'bg-accent-hover', role: 'button and link hover' },
+  {
+    token: 'accent-soft',
+    base: 'bg-accent-soft',
+    role: 'the brand colour — nav pill, inline code, footer link hover. A fill only.',
+  },
+  { token: 'highlight', base: 'bg-highlight', role: 'eyebrows, the 404 code, tag hover' },
+  {
+    token: 'highlight-soft',
+    base: 'bg-highlight-soft',
+    role: 'section rules, ::selection, focus ring on ink',
+  },
+];
+
+const CONTENT: Chip[] = [
+  { token: 'content', base: 'bg-surface', sample: 'text-content', role: 'headings and body' },
+  {
+    token: 'content-muted',
+    base: 'bg-surface',
+    sample: 'text-content-muted',
+    role: 'secondary text',
+  },
+  {
+    token: 'content-subtle',
+    base: 'bg-surface',
+    sample: 'text-content-subtle',
+    role: 'meta, dates, captions',
+  },
+  {
+    token: 'content-faint',
+    base: 'bg-surface',
+    sample: 'text-content-faint',
+    role: 'large text only — 3.4:1 on surface',
+  },
+  {
+    token: 'content-inverse',
+    base: 'bg-surface-inverse',
+    sample: 'text-content-inverse',
+    role: 'text on surface-inverse',
+  },
+  {
+    token: 'content-inverse-muted',
+    base: 'bg-surface-inverse',
+    sample: 'text-content-inverse-muted',
+    role: 'secondary text on surface-inverse',
+  },
+  {
+    token: 'on-accent',
+    base: 'bg-accent',
+    sample: 'text-on-accent',
+    role: 'text on an accent fill',
+  },
+  {
+    token: 'on-overlay',
+    base: 'bg-overlay',
+    under: 'bg-accent-soft',
+    sample: 'text-on-overlay',
+    role: 'text on an overlay',
+  },
+];
+
+const LINES: Chip[] = [
+  { token: 'line', base: 'bg-line', role: 'decorative dividers — no 3:1 obligation' },
+  {
+    token: 'line-strong',
+    base: 'bg-line-strong',
+    role: 'interactive boundaries — clears 3:1 on the page',
+  },
+  { token: 'focus', base: 'bg-focus', role: ':focus-visible outline' },
+];
+
+const GROUPS = [
+  { title: 'Surfaces', chips: SURFACES },
+  { title: 'Brand', chips: BRAND },
+  { title: 'Content', chips: CONTENT },
+  { title: 'Lines and focus', chips: LINES },
+];
+
+// ── Fail the build if this page and the stylesheet disagree ──────────────────────────
+
+const documented = new Set(GROUPS.flatMap((g) => g.chips.map((c) => c.token)));
+const undocumented = [...declared.keys()].filter((t) => !documented.has(t));
+const phantom = [...documented].filter((t) => !declared.has(t));
+
+if (undocumented.length > 0 || phantom.length > 0) {
+  throw new Error(
+    'styles.astro is out of step with the @theme block in global.css.' +
+      (undocumented.length ? `\n  Declared but not shown here: ${undocumented.join(', ')}` : '') +
+      (phantom.length ? `\n  Shown here but not declared: ${phantom.join(', ')}` : '') +
+      '\nAdd the token to the matching group above, or remove it from the stylesheet.',
+  );
+}
+
+// ── The type ladder, with a literal class per specimen ───────────────────────────────
+
+interface Specimen {
+  /** Role name — the part after `--text-` / `text-`. */
+  token: string;
+  /** Literal `text-*` class. Constructed names are never generated by Tailwind. */
+  size: string;
+  role: string;
+  /** Heading roles are set in the display face, so the specimen has to be too. */
+  display?: boolean;
+  /** `label` is the all-caps role; its tracking only makes sense uppercased. */
+  caps?: boolean;
+  sample: string;
+}
+
+// Largest first, matching the order in global.css. Presentation only — Tailwind emits
+// the utilities themselves alphabetically, which is why two roles never share an element.
+const LADDER: Specimen[] = [
+  {
+    token: 'display',
+    size: 'text-display',
+    display: true,
+    role: 'the homepage hero, and nothing else',
+    sample: 'Real-time graphics',
+  },
+  {
+    token: 'h1',
+    size: 'text-h1',
+    display: true,
+    role: 'page and article titles',
+    sample: 'Selected work',
+  },
+  {
+    token: 'h2',
+    size: 'text-h2',
+    display: true,
+    role: 'section headings',
+    sample: 'Rendering notes',
+  },
+  {
+    token: 'h3',
+    size: 'text-h3',
+    display: true,
+    role: 'card titles and subheads',
+    sample: 'A path tracer in the browser',
+  },
+  {
+    token: 'body',
+    size: 'text-body',
+    role: 'the default — body copy, ledes, the hero subhead, prose',
+    sample: 'Body copy sits at 18px on a 58ch measure, which renders about 62–66 characters.',
+  },
+  {
+    token: 'body-sm',
+    size: 'text-body-sm',
+    role: 'secondary and dense body copy — card descriptions, these paragraphs',
+    sample: 'The same voice, one step down, for copy that supports rather than leads.',
+  },
+  {
+    token: 'caption',
+    size: 'text-caption',
+    role: 'meta, dates, nav, buttons',
+    sample: 'Published 12 March 2026 · 8 min read',
+  },
+  {
+    token: 'label',
+    size: 'text-label',
+    caps: true,
+    role: 'ALL-CAPS eyebrows and chips — the only role with positive tracking',
+    sample: 'Project · 2026 · Renderer',
+  },
+  {
+    token: 'micro',
+    size: 'text-micro',
+    role: 'tag chips and the dense captions on this page',
+    sample: 'WebGL · GLSL · TypeScript',
+  },
+];
+
+// ── Fail the build if this page and the ladder disagree ──────────────────────────────
+
+const shown = new Set(LADDER.map((s) => s.token));
+const missingRoles = roleNames.filter((r) => !shown.has(r));
+const phantomRoles = [...shown].filter((r) => !roleNames.includes(r));
+
+if (missingRoles.length > 0 || phantomRoles.length > 0) {
+  throw new Error(
+    'styles.astro is out of step with the --text-* roles in global.css.' +
+      (missingRoles.length ? `\n  Declared but not shown here: ${missingRoles.join(', ')}` : '') +
+      (phantomRoles.length ? `\n  Shown here but not declared: ${phantomRoles.join(', ')}` : '') +
+      '\nAdd the role to LADDER above, or remove it from the stylesheet.',
+  );
+}
+
+/** Palette tiers grouped by hue family, in stylesheet order. */
+const families = ['shell', 'ink', 'aqua', 'salmon'].map((family) => ({
+  family,
+  tiers: palette
+    .filter((p) => p.name.startsWith(`${family}-`))
+    .sort(
+      (a, b) =>
+        Number.parseInt(a.name.split('-')[1], 10) - Number.parseInt(b.name.split('-')[1], 10),
+    ),
+}));
+---
+
+<PageLayout
+  title="Styles"
+  description="The colour and type systems behind this site — every semantic token and the layer underneath it."
+  noindex
+>
+  <div class="space-y-16">
+    <section>
+      <h2 class="text-h2 text-content">Colours</h2>
+
+      {GROUPS.map((group) => (
+          <div class="mt-8">
+            <h3 class="text-label uppercase text-highlight">{group.title}</h3>
+            <ul class="mt-3 flex flex-wrap gap-4">
+              {group.chips.map((chip) => (
+                <li>
+                  <Swatch
+                    name={chip.token}
+                    value={declared.get(chip.token) ?? ''}
+                    role={chip.role}
+                    base={chip.base}
+                    under={chip.under}
+                    sample={chip.sample}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+
+      {families.map(({ family, tiers }) => (
+          <div class="mt-8">
+            <h3 class="text-label uppercase text-highlight">{family}</h3>
+            <ul class="mt-3 flex flex-wrap gap-4">
+              {tiers.map((tier) => (
+                <li>
+                  <Swatch
+                    name={tier.name}
+                    value={`${tier.value} · ${tier.hex}`}
+                    style={`background-color: var(--${tier.name})`}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+    </section>
+
+    <section>
+      <h2 class="text-h2 text-content">Typography</h2>
+
+      <ul class="mt-8 space-y-8">
+        {LADDER.map((spec) => {
+            const ramp = rampFor(spec.token);
+            return (
+              <li class="border-t border-line pt-5">
+                <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+                  <p class="font-mono text-micro text-content">
+                    text-{spec.token}
+                    {' · '}
+                    Oswald
+                  </p>
+                  <p class="font-mono text-micro text-content-subtle">
+                    {ramp.length > 0 ? ramp.join(' → ') : 'constant'}
+                    {' · '}
+                    {subProperty(spec.token, 'font-weight')}
+                    {' / '}
+                    {subProperty(spec.token, 'line-height')}
+                    {' / '}
+                    {subProperty(spec.token, 'letter-spacing')}
+                  </p>
+                </div>
+
+                <p
+                  class:list={[
+                    'mt-3 text-content',
+                    spec.size,
+                    /* Oswald is site-wide; no font override needed */
+                    spec.caps && 'uppercase',
+                  ]}
+                >
+                  {spec.sample}
+                </p>
+
+                <p class="mt-2 text-micro text-content-muted">{spec.role}</p>
+              </li>
+            );
+          })}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-h2 text-content">Buttons</h2>
+
+      <div class="mt-8 space-y-10">
+        <div>
+          <h3 class="text-label uppercase text-highlight">Press</h3>
+          <div class="mt-4">
+            <Button href="#buttons" class="px-8 py-4">Press me</Button>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-label uppercase text-highlight">Underline</h3>
+          <div class="mt-4">
+            <Button href="#buttons" variant="underline">Underline link</Button>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-label uppercase text-highlight">Text</h3>
+          <div class="mt-4">
+            <Button href="#buttons" variant="text">Text link</Button>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-label uppercase text-highlight">Inverse</h3>
+          <div
+            class="on-inverse mt-4 flex flex-wrap items-center gap-5 rounded-lg bg-surface-inverse p-6"
+          >
+            <Button href="#buttons" inverse class="px-8 py-4">Press</Button>
+            <Button href="#buttons" variant="underline" inverse>Underline</Button>
+            <Button href="#buttons" variant="text" inverse>Text</Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</PageLayout>

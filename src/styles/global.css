@@ -5,115 +5,421 @@
   Tailwind v4 is configured here, in CSS. There is no tailwind.config.js — creating one
   is a v3 habit that silently does nothing in v4.
 
-  Theming strategy: `@theme` maps Tailwind's token names onto plain CSS variables, and
-  those variables get their values in the `:root` blocks below. That means a utility
-  like `bg-surface` follows light/dark automatically, with no `dark:` prefix and no
-  flash of the wrong theme on first paint.
+  ── Colour architecture: two layers ──────────────────────────────────────────────────
+
+    :root { --aqua-600: … }              PALETTE — plain CSS vars. Deliberately NOT in
+            ↓                            @theme, so no `bg-aqua-600` utility can exist.
+    @theme { --color-accent: … }         SEMANTIC — the only layer markup may touch.
+            ↓
+    class="bg-accent text-on-accent"     MARKUP — roles only, never a raw hue.
+
+  Keeping the palette out of @theme is what makes "no hardcoded colours" mechanically
+  enforceable: no utility class names a hue, so the only way to get colour into markup
+  is through a role. Add a role here before reaching for a literal.
+
+  One theme, light only. There is no dark palette, no `dark:` variant and no
+  `data-theme` attribute — see `color-scheme` below.
+
+  ── Type architecture: the same two layers ───────────────────────────────────────────
+
+    :root { --step-h1: 2rem; @media … { --step-h1: 3.5rem } }
+            ↓                            RAMP — plain CSS vars, stepped at breakpoints.
+    @theme { --text-h1: var(--step-h1); … }
+            ↓                            SEMANTIC — the only layer markup may touch.
+    class="text-h1"                      MARKUP — one class, responsive, no `sm:` variant.
+
+  See the TYPE RAMP and "Type roles" blocks below.
 */
 
+/*
+  ── PALETTE ──────────────────────────────────────────────────────────────────────────
+
+  Miami deco: cream stucco ground, aqua and salmon banding, black linework. The
+  neutrals carry a faint cool cast (hue 190/220) so the aqua reads clean beside them
+  rather than muddy.
+
+  Two tiers per hue, and they are not interchangeable. `aqua-200` is the brand colour
+  #71cfd7 exactly — and at 1.73:1 on cream it CANNOT carry text or act as a boundary.
+  It is a fill: body text sits on it at 9.98:1. So the hue also needs a text-safe tier
+  that passes AA as text on cream and carries cream text as a button fill.
+
+  The sRGB gamut does not contain a saturated aqua at text-safe lightness: max chroma
+  at hue 203 is 0.068 at L40 and 0.082 at L48. `aqua-600` is therefore necessarily a
+  deep teal, not a bright aqua — the pastel tier carries the brand identity and the
+  deep tier is the functional interactive tone. DO NOT raise the chroma of aqua-600 or
+  aqua-700: it clips and shifts hue, silently. Same ceiling on salmon in reverse —
+  salmon-200 is capped at ~0.046 chroma at L91.
+*/
+:root {
+  --shell-000: oklch(100% 0 0); /* #ffffff */
+  --shell-050: oklch(98.4% 0.006 190); /* #f5fbfb */
+  --shell-100: oklch(96.2% 0.01 190); /* #ebf5f4 */
+  --shell-200: oklch(90.5% 0.014 190); /* #d6e3e2 */
+  --shell-300: oklch(64% 0.02 190); /* #7f908f */
+
+  --ink-900: oklch(20% 0.025 220); /* #08191e */
+  --ink-800: oklch(24% 0.024 220); /* #122227 */
+  --ink-600: oklch(38% 0.022 220); /* #36454b */
+  --ink-400: oklch(49% 0.018 220); /* #566368 */
+  --ink-200: oklch(62.5% 0.015 220); /* #7e8a8e — 3.40:1 on surface, large text only */
+
+  --aqua-200: oklch(80% 0.09 203); /* #71cfd7 — the brand colour, used exactly */
+  --aqua-600: oklch(48% 0.08 203); /* #076b72 */
+  --aqua-700: oklch(40% 0.066 203); /* #065257 */
+
+  --salmon-200: oklch(91% 0.045 28); /* #fed7d1 */
+  --salmon-600: oklch(53% 0.16 30); /* #b63c2e */
+
+  /*
+    Focus ring colour, one level of indirection so `.on-inverse` can retarget it for a
+    whole subtree. Salmon on ink is only 2.86:1, so the ink footer band switches to the
+    pastel tier — see the utility below.
+  */
+  --focus-ring: var(--color-focus);
+
+  /*
+    Shader palette for the WebGL demos, as normalised RGB triples.
+
+    GLSL cannot read CSS variables and parsing oklch() in JS would mean ~40 lines of
+    colour-space maths inside the demo chunk, so the shader tones are published here as
+    plain numbers and read once via getComputedStyle (see shaderRenderer.ts). They are
+    already sRGB-encoded, which is what the framebuffer expects — no linearisation.
+
+    Deliberately more saturated than the UI pastels: this is a full-frame visual field,
+    not a surface that has to carry text. If a triple here is missing or unparseable
+    the renderer returns null and the demo poster stays put.
+  */
+  --gl-deep: 0.016 0.184 0.196; /* #042f32 */
+  --gl-mid: 0.443 0.812 0.843; /* #71cfd7 — the brand colour, mirrored from --aqua-200 */
+  --gl-hot: 0.976 0.682 0.635; /* #f9aea2 */
+
+  /*
+    One theme only. Naming just `light` stops the browser painting form controls,
+    scrollbars and the canvas behind the page in a dark scheme the site does not have.
+  */
+  color-scheme: light;
+}
+
+/*
+  ── TYPE RAMP ────────────────────────────────────────────────────────────────────────
+
+  The same move as the palette: plain vars, deliberately NOT in @theme, so no
+  `text-step-h1` utility can exist and the only way to set type in markup is a role.
+
+  Five vars carry the entire responsive ladder, because each role pairs its size with a
+  *unitless* line-height and `em` tracking — both of which scale off font-size on their
+  own. Only the size has to step at a breakpoint, so markup never writes an `sm:` variant.
+
+  This works only because Tailwind preserves the var() indirection: `--text-h1:
+  var(--step-h1)` lands on :root as a real custom property and the utility emits
+  `font-size: var(--text-h1)`, so redefining --step-h1 in a media query propagates.
+
+  Stepped rather than clamp() on purpose — h1/h2/h3 all *plateau* between tablet and
+  desktop, and a clamp() would interpolate straight through the plateau.
+*/
+:root {
+  --step-display: 3.25rem; /* 52px */
+  --step-h1: 2rem; /* 32px */
+  --step-h2: 1.75rem; /* 28px */
+  --step-h3: 1.125rem; /* 18px */
+  --step-body: 1rem; /* 16px */
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --step-display: 4.5rem; /* 72px */
+    --step-h1: 3.5rem; /* 56px */
+    --step-h2: 2rem; /* 32px */
+    --step-h3: 1.25rem; /* 20px */
+    --step-body: 1.125rem; /* 18px */
+  }
+}
+
+/* Only the hero moves again; everything else has already reached its ceiling. */
+@media (min-width: 64rem) {
+  :root {
+    --step-display: 5.75rem; /* 92px */
+  }
+}
+
+/*
+  ── SEMANTIC TOKENS ──────────────────────────────────────────────────────────────────
+
+  Roles, not hues. Every one of these is contrast-verified against the surfaces it is
+  actually used on; the ratios are in plans/01_Colors.md.
+
+  Status colours (positive/caution/critical) are deliberately absent — no UI needs them
+  yet and unused tokens rot. Add them at the same two tiers if a form or toast lands.
+*/
 @theme {
+  /*
+    Two families. `display` is bound to the heading elements in @layer base rather than
+    to the size tokens — a --text-* token can only carry size, leading, tracking and
+    weight, never a family. Oswald has NO italic: never put `italic` on a heading,
+    the browser would synthesize a mechanical oblique. Body italic is fine, Inter has one.
+  */
+  --font-display: var(--font-oswald), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  /* Semantic colours — see the :root blocks for actual values. */
-  --color-canvas: var(--c-canvas);
-  --color-surface: var(--c-surface);
-  --color-surface-raised: var(--c-surface-raised);
-  --color-border: var(--c-border);
-  --color-ink: var(--c-ink);
-  --color-ink-muted: var(--c-ink-muted);
-  --color-ink-subtle: var(--c-ink-subtle);
-  --color-accent: var(--c-accent);
-  --color-accent-ink: var(--c-accent-ink);
+  /* Surfaces. White cards pop *up* off the cream ground, hence `raised` being lighter. */
+  --color-surface: var(--shell-050);
+  --color-surface-sunken: var(--shell-100);
+  --color-surface-raised: var(--shell-000);
+  --color-surface-inverse: var(--ink-800);
+
+  /*
+    Overlays — controls floating over arbitrary imagery, where no page surface is
+    underneath to guarantee contrast. Alpha is baked into the token rather than applied
+    as a `/70` modifier, because a modifier on a token that already has alpha
+    *compounds* (0.55 × 0.70 ≈ 0.385) instead of replacing it. Hence a second token.
+  */
+  --color-overlay: color-mix(in oklab, var(--ink-900) 55%, transparent);
+  --color-overlay-hover: color-mix(in oklab, var(--ink-900) 75%, transparent);
+
+  /* Brand. Aqua carries interaction; salmon accents and marks position. */
+  --color-accent: var(--aqua-600);
+  --color-accent-hover: var(--aqua-700);
+  --color-accent-soft: var(--aqua-200);
+  --color-highlight: var(--salmon-600);
+  --color-highlight-soft: var(--salmon-200);
+
+  /* Content. */
+  --color-content: var(--ink-900);
+  --color-content-muted: var(--ink-600);
+  --color-content-subtle: var(--ink-400);
+  /* 3.40:1 — clears AA for large text only. Never put body copy on this. */
+  --color-content-faint: var(--ink-200);
+  --color-content-inverse: var(--shell-050);
+  --color-content-inverse-muted: var(--shell-300);
+
+  /*
+    Text on a coloured fill. No `on-accent-soft` / `on-highlight-soft`: text on either
+    pastel is always `content` (13.70:1 and 13.59:1), so a token would just be an alias.
+  */
+  --color-on-accent: var(--shell-050);
+  --color-on-overlay: var(--shell-050);
+
+  /*
+    Lines. `line` is decorative and carries no 3:1 obligation; `line-strong` is for
+    boundaries that are themselves the affordance — a secondary button's edge, the
+    scrollbar thumb — and clears 3:1 against the page.
+  */
+  --color-line: var(--shell-200);
+  --color-line-strong: var(--shell-300);
+
+  --color-focus: var(--salmon-600);
+
+  /*
+    ── Type roles ─────────────────────────────────────────────────────────────────────
+
+    Clearing these three namespaces DELETES Tailwind's stock scale: `text-4xl`,
+    `leading-snug` and `tracking-tight` cease to exist, so a hardcoded size is no longer
+    expressible — the same enforcement as keeping the palette out of @theme. The clears
+    have to come first; @theme is processed in order.
+
+    `--text-*: initial` is prefix-based but consults an exclusion list, so it removes
+    --text-xs … --text-9xl and leaves --text-shadow-* alone. Colour utilities are
+    untouched: `text-content` resolves through --text-color / --color, not --text-*.
+
+    TWO TRAPS. Tailwind does not error on an unknown utility, it silently emits nothing —
+    a stale `text-4xl` still passes `npm run verify` and just renders at 1rem. And
+    clearing a namespace does not disable arbitrary values: `text-[20px]` still compiles.
+    The greps in AGENTS.md are the only real gate.
+  */
+  --text-*: initial;
+  --leading-*: initial;
+  --tracking-*: initial;
+
+  /* Trimmed rather than cleared, down to exactly the four faces that are loaded. Asking
+     for a weight the browser would have to synthesize is now inexpressible. */
+  --font-weight-thin: initial;
+  --font-weight-extralight: initial;
+  --font-weight-light: initial;
+  --font-weight-extrabold: initial;
+  --font-weight-black: initial;
+
+  /*
+    Nine roles — size roles, not element names, the same "roles, not hues" principle as
+    the colour layer. Each carries size + line-height + tracking + weight, which is why
+    markup writes exactly one class and never a companion `font-*` or `leading-*`.
+
+    ONE ROLE PER ELEMENT, always. Tailwind emits these utilities in ALPHABETICAL order of
+    the role name (verified in the built sheet: body, body-sm, caption, display, h1, h2,
+    h3, label, micro), NOT in the order declared here and NOT by size — so two roles on
+    one element resolve by an ordering that means nothing, and `text-caption text-body`
+    silently renders at 14px. Order below is largest-first purely because it reads as a
+    ladder; changing it changes nothing in the output.
+
+    A `font-*` utility DOES override a role's weight — every font-weight utility is
+    emitted after every text-* one — which is what makes weight-as-emphasis work.
+
+    Tracking tapers with size — the specified −6% is right at 80px and cramped at 20px,
+    since optical tracking scales inversely with size and this ladder spans 4×.
+  */
+
+  /* The homepage hero alone. Named for its size, not its element, so `text-h1` can stay
+     on the thing that is actually an <h1> on every other page. */
+  --text-display: var(--step-display); /* 44 → 64 → 80 */
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.06em;
+  --text-display--font-weight: 700;
+
+  --text-h1: var(--step-h1); /* 32 → 56 — page and article titles */
+  --text-h1--line-height: 1.05;
+  --text-h1--letter-spacing: -0.06em;
+  --text-h1--font-weight: 700;
+
+  --text-h2: var(--step-h2); /* 28 → 32 */
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.045em;
+  --text-h2--font-weight: 600;
+
+  --text-h3: var(--step-h3); /* 18 → 20 */
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.03em;
+  --text-h3--font-weight: 600;
+
+  /* The default. `body` is set to this in @layer base, so 18px is the site's body size
+     and most paragraphs need no class at all. */
+  --text-body: var(--step-body); /* 16 → 18 */
+  --text-body--line-height: 1.6;
+  --text-body--letter-spacing: -0.02em;
+  --text-body--font-weight: 400;
+
+  --text-body-sm: 1rem; /* 16px — constant */
+  --text-body-sm--line-height: 1.65;
+  --text-body-sm--letter-spacing: -0.02em;
+  --text-body-sm--font-weight: 400;
+
+  --text-caption: 0.875rem; /* 14px — constant */
+  --text-caption--line-height: 1.5;
+  --text-caption--letter-spacing: -0.01em;
+  --text-caption--font-weight: 400;
+
+  /* The ALL-CAPS role, and the only token with positive tracking. */
+  --text-label: 0.8125rem; /* 13px — constant */
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.01em;
+  --text-label--font-weight: 600;
+
+  --text-micro: 0.75rem; /* 12px — constant */
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0;
+  --text-micro--font-weight: 400;
 
   /* Motion. Kept as tokens so the reduced-motion block can zero them all at once. */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 150ms;
   --duration-base: 250ms;
 
-  /* Reading measure for prose. */
-  --container-prose: 68ch;
-}
-
-/* Light theme (default). */
-:root {
-  --c-canvas: oklch(99% 0.003 265);
-  --c-surface: oklch(100% 0 0);
-  --c-surface-raised: oklch(97% 0.005 265);
-  --c-border: oklch(90% 0.008 265);
-  --c-ink: oklch(22% 0.015 265);
-  --c-ink-muted: oklch(45% 0.012 265);
-  --c-ink-subtle: oklch(60% 0.01 265);
-  --c-accent: oklch(55% 0.19 265);
-  --c-accent-ink: oklch(99% 0.005 265);
-
-  color-scheme: light dark;
-}
-
-/* System dark, unless the visitor has explicitly chosen light. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --c-canvas: oklch(15% 0.012 265);
-    --c-surface: oklch(18% 0.014 265);
-    --c-surface-raised: oklch(22% 0.016 265);
-    --c-border: oklch(30% 0.018 265);
-    --c-ink: oklch(95% 0.008 265);
-    --c-ink-muted: oklch(72% 0.012 265);
-    --c-ink-subtle: oklch(58% 0.012 265);
-    --c-accent: oklch(72% 0.16 265);
-    --c-accent-ink: oklch(16% 0.015 265);
-  }
-}
-
-/* Explicit dark choice wins in both directions. */
-:root[data-theme="dark"] {
-  --c-canvas: oklch(15% 0.012 265);
-  --c-surface: oklch(18% 0.014 265);
-  --c-surface-raised: oklch(22% 0.016 265);
-  --c-border: oklch(30% 0.018 265);
-  --c-ink: oklch(95% 0.008 265);
-  --c-ink-muted: oklch(72% 0.012 265);
-  --c-ink-subtle: oklch(58% 0.012 265);
-  --c-accent: oklch(72% 0.16 265);
-  --c-accent-ink: oklch(16% 0.015 265);
-}
-
-/*
-  `dark:` utilities, for the rare case a semantic token isn't enough. Matches both the
-  system preference and an explicit [data-theme="dark"], so it stays in sync with the
-  variables above.
-*/
-@custom-variant dark {
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
-      @slot;
-    }
-  }
-  &:where([data-theme="dark"], [data-theme="dark"] *) {
-    @slot;
-  }
+  /*
+    Reading measure. `ch` is the advance width of "0" and average lowercase glyphs are
+    narrower, so 58ch renders ≈62–66 characters. Load-bearing in two places: --container-
+    prose is not part of Tailwind's stock theme, so `max-w-prose` works here only because
+    this line exists — the five max-w-prose call sites narrow with .prose.
+  */
+  --container-prose: 58ch;
 }
 
 @layer base {
   html {
-    scroll-behavior: smooth;
-    /* Stops the page shifting sideways when a scrollbar appears/disappears. */
-    scrollbar-gutter: stable;
+    /* Lenis handles smooth scrolling in JS; CSS smooth-scroll removed to avoid
+       double-smoothing. SmoothScroll.astro destroys Lenis when reduced motion is
+       active, so the browser's instant scroll takes over naturally. */
+    scrollbar-color: transparent transparent;
+    scrollbar-width: thin;
   }
 
+  /* Firefox: show thumb while scrolling. `thin` already removes arrows. */
+  html[data-scrolling] {
+    scrollbar-color: var(--color-highlight-soft) transparent;
+  }
+
+  /* WebKit/Blink scrollbar — floating pill thumb, no track, no arrows, no corner.
+     Once ANY ::-webkit-scrollbar rule exists, the browser hands over full control:
+     track, buttons, corner all default to nothing unless explicitly styled. */
+  ::-webkit-scrollbar {
+    width: 12px;
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: transparent;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+    transition: background 0.4s ease;
+  }
+
+  html[data-scrolling] ::-webkit-scrollbar-thumb {
+    background: var(--color-highlight-soft);
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-highlight);
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  /* `text-body` is the default role, not a class you have to remember to write. */
   body {
-    background-color: var(--color-canvas);
-    color: var(--color-ink);
+    background-color: var(--color-surface);
+    color: var(--color-content);
     font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    letter-spacing: -0.02em;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
-  /* Visible only for keyboard users, and never suppressed without a replacement. */
+  /*
+    The display face binds to the heading *elements* rather than to the size tokens,
+    because a --text-* token cannot carry a font-family. Binding here is the right
+    coupling anyway: .prose headings are covered for free, and something that merely
+    looks like a heading doesn't inherit the display face by accident.
+
+    Two places reach for `font-display` directly and deliberately — the Header wordmark
+    (an <a>) and the /styles specimens. This hand-authored reference is also what keeps
+    --font-display alive through @theme's pruning, same mechanism as --color-focus.
+  */
+  :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--font-display);
+  }
+
+  /*
+    Visible only for keyboard users, and never suppressed without a replacement.
+
+    `outline-offset` is doing real work: salmon on the deep teal is 1.10:1, but the offset
+    exposes the page ground between ring and element, so the ring reads against cream
+    (5.47:1) regardless of what it happens to surround.
+  */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
     border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-highlight-soft);
+    color: var(--color-content);
   }
 
   /* Headings should not be orphaned from the text that follows them. */
@@ -125,9 +431,119 @@
     text-wrap: pretty;
   }
 
+  /* Project showcase titles: faint by default, full contrast on hover. */
+  .showcase-title {
+    color: var(--color-content-faint);
+    transition: color 0.4s ease;
+  }
+
+  .showcase-title:hover {
+    color: var(--color-content);
+  }
+
   /* Anchors targeted by in-page links clear the sticky header. */
   :target {
     scroll-margin-top: 5rem;
+  }
+}
+
+/*
+  Page-load curtain — a dark panel that covers the viewport and lifts up to
+  reveal the site. Fires on every page load via a CSS animation keyed to the
+  element's existence. Placed after </main> in BaseLayout so it paints above
+  all content without needing z-index games with the header.
+*/
+.page-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: var(--color-surface-inverse);
+  animation: curtain-lift 1s var(--ease-out-soft) 0.2s both;
+  pointer-events: none;
+}
+
+@keyframes curtain-lift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+/*
+  Post-curtain entrance: elements slide in from the nearest edge once the curtain
+  has finished lifting. The curtain takes 1s + 0.2s delay = done at 1.2s, so these
+  start at 1.3s with a gentle slide and fade.
+*/
+.reveal-from-left,
+.reveal-from-right,
+.reveal-from-top,
+.reveal-from-bottom {
+  opacity: 0;
+  animation-duration: 0.7s;
+  animation-timing-function: var(--ease-out-soft);
+  animation-delay: 1.3s;
+  animation-fill-mode: both;
+}
+
+.reveal-from-left {
+  animation-name: slide-from-left;
+}
+
+.reveal-from-right {
+  animation-name: slide-from-right;
+}
+
+.reveal-from-top {
+  animation-name: slide-from-top;
+}
+
+.reveal-from-bottom {
+  animation-name: slide-from-bottom;
+}
+
+@keyframes slide-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-from-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -141,29 +557,217 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
+
+  /*
+    Mark a subtree as sitting on `surface-inverse`. The default salmon focus ring is
+    2.86:1 on the ink band — a keyboard user tabbing into the footer would see almost
+    nothing — so the ring switches to the pastel tier (12.33:1) for everything inside.
+  */
+  .on-inverse {
+    --focus-ring: var(--color-highlight-soft);
+  }
+
+  /* Animated underline for the `underline` button variant. Lives here (not in a
+     scoped <style> block) because Tailwind's pruner can't see .astro scoped styles. */
+  .btn-underline {
+    position: relative;
+  }
+
+  .btn-underline::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--color-content);
+    transform-origin: left;
+    transition: transform var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .btn-underline:hover::after {
+    transform: scaleX(0);
+  }
+
+  /*
+    Header overlay mode for the hero. The header's own Tailwind classes handle the
+    normal solid state; these rules override to transparent when the hero is in view.
+    The transition properties are on the element via Tailwind.
+  */
+  header[data-hero-overlay="true"] {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /*
+    Mobile nav panel — collapses/expands with the grid-template-rows technique.
+    The inner <div> has `overflow: hidden` in markup so content clips during the
+    transition. The border-bottom only appears when the panel is open.
+  */
+  .nav-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--duration-base) var(--ease-out-soft);
+  }
+
+  .nav-panel-open {
+    grid-template-rows: 1fr;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /*
+    Hamburger → X animation. The three bars start as horizontal lines. When the
+    parent button has `aria-expanded="true"`, the top and bottom bars rotate into
+    an X and the middle bar fades out.
+  */
+  .nav-bar {
+    transform-origin: center;
+    transition:
+      transform var(--duration-base) var(--ease-out-soft),
+      opacity var(--duration-fast) var(--ease-out-soft);
+  }
+
+  [aria-expanded="true"] .nav-bar-top {
+    transform: translate(0, 6px) rotate(45deg);
+  }
+
+  [aria-expanded="true"] .nav-bar-mid {
+    opacity: 0;
+  }
+
+  [aria-expanded="true"] .nav-bar-bot {
+    transform: translate(0, -6px) rotate(-45deg);
+  }
+
+  /*
+    Hero fan — placeholder cards fanning outward from centre.
+    Responsive widths step at the same breakpoints as the type ramp.
+    Shared styles live here; per-card rotation and offset are inline styles.
+  */
+  .hero-card {
+    width: 5.5rem;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    border-radius: 0.75rem;
+    border: none;
+    background-color: var(--color-surface);
+    box-shadow:
+      0 4px 12px color-mix(in oklab, var(--ink-900) 15%, transparent),
+      0 16px 48px color-mix(in oklab, var(--ink-900) 20%, transparent);
+    transition:
+      transform 0.3s var(--ease-out-soft),
+      box-shadow 0.3s var(--ease-out-soft);
+  }
+
+  .hero-card:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow:
+      0 8px 20px color-mix(in oklab, var(--ink-900) 20%, transparent),
+      0 24px 60px color-mix(in oklab, var(--ink-900) 25%, transparent);
+  }
+
+  @media (min-width: 48rem) {
+    .hero-card {
+      width: 9rem;
+      border-radius: 1rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .hero-card {
+      width: 11rem;
+    }
+  }
+
+  /*
+    Elevated card — multi-layer shadow for a convincing 3D lift off a dark ground.
+    Layer 1: tight, dark — the near contact shadow.
+    Layer 2: wide, soft — ambient occlusion.
+    Uses ink at low alpha so the shadow tints warm on cream and cool on ink.
+  */
+  .card-elevated {
+    box-shadow:
+      0 4px 12px color-mix(in oklab, var(--ink-900) 25%, transparent),
+      0 16px 48px color-mix(in oklab, var(--ink-900) 18%, transparent);
+  }
 }
 
 /*
   Point @tailwindcss/typography at the semantic tokens so `prose` needs no `dark:`
-  variant and cannot drift from the rest of the site.
+  variant and cannot drift from the rest of the site. Unlayered on purpose: the plugin
+  registers its own defaults in a cascade layer, and unlayered rules outrank all layers.
 */
 .prose {
-  --tw-prose-body: var(--color-ink-muted);
-  --tw-prose-headings: var(--color-ink);
-  --tw-prose-lead: var(--color-ink-muted);
+  --tw-prose-body: var(--color-content-muted);
+  --tw-prose-headings: var(--color-content);
+  --tw-prose-lead: var(--color-content-muted);
   --tw-prose-links: var(--color-accent);
-  --tw-prose-bold: var(--color-ink);
-  --tw-prose-counters: var(--color-ink-subtle);
-  --tw-prose-bullets: var(--color-border);
-  --tw-prose-hr: var(--color-border);
-  --tw-prose-quotes: var(--color-ink);
+  --tw-prose-bold: var(--color-content);
+  --tw-prose-counters: var(--color-content-subtle);
+  --tw-prose-bullets: var(--color-line-strong);
+  --tw-prose-hr: var(--color-line);
+  --tw-prose-quotes: var(--color-content);
   --tw-prose-quote-borders: var(--color-accent);
-  --tw-prose-captions: var(--color-ink-subtle);
-  --tw-prose-code: var(--color-ink);
-  --tw-prose-th-borders: var(--color-border);
-  --tw-prose-td-borders: var(--color-border);
+  --tw-prose-captions: var(--color-content-subtle);
+  --tw-prose-code: var(--color-content);
+  --tw-prose-pre-code: var(--color-content-inverse);
+  --tw-prose-pre-bg: var(--color-surface-inverse);
+  --tw-prose-th-borders: var(--color-line);
+  --tw-prose-td-borders: var(--color-line);
 
   max-width: var(--container-prose);
+  font-size: var(--step-body);
+  line-height: 1.6;
+  letter-spacing: -0.02em;
+}
+
+/*
+  Markdown headings onto the same ladder. Mandatory, not cosmetic: the plugin hardcodes
+  its own em-based scale and never reads --text-*, so without this `prose-lg` would give
+  h1 = 48px, h2 = 30px, h3 = 24px — quietly diverging from the ladder on exactly the
+  pages carrying the most heading text. It also asks h1 for weight 800, a face loaded in
+  neither family; the 700 below is what stops that synthesizing.
+
+  `prose prose-lg` stays on ArticleLayout and /about for its vertical rhythm, whose
+  margins are em-based and therefore recompute against the sizes set here.
+*/
+.prose h1 {
+  font-size: var(--step-h1);
+  line-height: 1.05;
+  letter-spacing: -0.06em;
+  font-weight: 700;
+}
+
+.prose h2 {
+  font-size: var(--step-h2);
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+}
+
+.prose h3 {
+  font-size: var(--step-h3);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+.prose h4 {
+  font-size: var(--step-body);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+/*
+  `**bold**` inside a markdown heading. The plugin asks for 900 in an h1 and 800 in an h2 —
+  neither family loads either, so both synthesize. Inheriting the heading's own weight is
+  also the right answer typographically: emphasis inside an already-bold heading says
+  nothing. (Body `strong` is left alone; the plugin's 600 is a real Inter face.)
+*/
+.prose :is(h1, h2, h3, h4) strong {
+  font-weight: inherit;
 }
 
 /* Wide content must scroll inside itself rather than making the page scroll sideways. */
@@ -172,26 +776,38 @@
 }
 
 /*
-  Shiki emits both themes as inline CSS variables (see markdown.shikiConfig). These
-  rules pick the dark set, matching the same conditions as the colour tokens above.
-  The !important is required — Shiki writes the light values as inline styles.
+  Inline code as an aqua wash. The typography plugin wraps inline <code> in literal
+  backtick characters via ::before/::after, which read as stray punctuation once there
+  is a background behind them — so they are removed. `pre code` already has its
+  backticks cleared upstream and is excluded here, since a code panel styles its own
+  spans.
+
+  Weight 400, not 500: JetBrains Mono is loaded at 400 only, so anything heavier renders
+  as a synthesized fake bold. The aqua wash already marks inline code well enough.
 */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) :is(.astro-code, .astro-code span) {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-    font-style: var(--shiki-dark-font-style) !important;
-    font-weight: var(--shiki-dark-font-weight) !important;
-    text-decoration: var(--shiki-dark-text-decoration) !important;
-  }
+.prose :where(code):not(:where(pre *, .not-prose, .not-prose *)) {
+  border-radius: 0.3rem;
+  background-color: var(--color-accent-soft);
+  padding: 0.15em 0.4em;
+  color: var(--color-content);
+  font-weight: 400;
 }
 
-:root[data-theme="dark"] :is(.astro-code, .astro-code span) {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
+.prose :where(code):not(:where(pre *, .not-prose, .not-prose *))::before,
+.prose :where(code):not(:where(pre *, .not-prose, .not-prose *))::after {
+  content: none;
+}
+
+/*
+  Code panels re-grounded in the site's own ink.
+
+  With a single Shiki theme (see `markdown.shikiConfig` in astro.config.mjs) Shiki
+  writes literal hex as an inline style, so !important is the only way to reach it.
+  Scoped to `.astro-code` alone and to `background-color` alone — widening this to the
+  token spans would wipe every syntax colour on the page.
+*/
+.astro-code {
+  background-color: var(--color-surface-inverse) !important;
 }
 
 /*

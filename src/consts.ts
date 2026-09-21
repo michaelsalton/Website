@@ -9,28 +9,27 @@
 export const SITE = {
   title: 'Michael Salton',
   /** Used as the default <title> suffix and in the JSON-LD / OG tags. */
-  tagline: 'Graphics & web engineer',
+  tagline: 'Software developer, computer graphics',
   description:
     'Portfolio of Michael Salton — real-time graphics, rendering, and web engineering. Projects, writing, and interactive WebGL demos.',
   /** Two candidates exist (michael@lootzysoft.com, msalton6@gmail.com) — pick one. */
-  email: 'michael@lootzysoft.com',
+  email: 'msalton6@gmail.com',
   locale: 'en',
   /** BCP 47 tag for <html lang> and date formatting. */
   lang: 'en-CA',
 } as const;
 
 export const NAV = [
-  { href: '/projects', label: 'Projects' },
-  { href: '/demos', label: 'Demos' },
-  { href: '/blog', label: 'Writing' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/#about', label: 'About' },
+  { href: '/#projects', label: 'Projects' },
+  { href: '#footer', label: 'Contact' },
 ] as const;
 
 export const SOCIALS = [
-  { href: 'https://github.com/michaelsalton', label: 'GitHub' },
-  // TODO: fill in or delete — an empty social link is worse than a missing one.
   { href: 'https://www.linkedin.com/in/', label: 'LinkedIn' },
+  { href: 'https://github.com/michaelsalton', label: 'GitHub' },
+  { href: 'https://www.youtube.com/', label: 'YouTube' },
+  { href: `mailto:${SITE.email}`, label: 'Email' },
 ] as const;
 
 /** Number of entries per page on the blog and project indexes. */

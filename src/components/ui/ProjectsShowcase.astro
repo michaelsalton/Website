@@ -1,0 +1,32 @@
+---
+/**
+ * Typographic project list — large stacked project titles, faint by default,
+ * highlighting on hover. Each title opens the corresponding ProjectShowCard modal.
+ */
+import { getProjects } from '../../lib/content';
+import ProjectShowCardSet from './ProjectShowCardSet.astro';
+
+const projects = await getProjects();
+---
+
+{projects.length > 0 && (
+  <section id="projects" class="scroll-mt-24 flex flex-col items-center bg-surface px-6 py-32 sm:px-8">
+    <h2 class="text-h1 text-content uppercase mb-16">Projects</h2>
+
+    <ul class="flex flex-col items-center gap-2" aria-label="Projects">
+      {projects.map((project) => (
+        <li>
+          <button
+            type="button"
+            class="showcase-title text-h2 font-bold uppercase text-center cursor-pointer"
+            data-show-project={project.id}
+          >
+            {project.data.title}
+          </button>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<ProjectShowCardSet />

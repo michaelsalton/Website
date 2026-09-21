@@ -1,0 +1,152 @@
+---
+/**
+ * Synthesises UI sounds via the Web Audio API:
+ * - Bubbly pop on card hover (two detuned oscillators with frequency sweep)
+ * - Keyboard click on pill-button press (noise burst + low thump)
+ * No audio files — all synthesised. Respects prefers-reduced-motion.
+ *
+ * Drop this component once in BaseLayout; it self-initialises and
+ * re-binds after Astro view transitions.
+ */
+---
+
+<script>
+const CARD_SELECTOR = '.group[href], .hero-card, .work-thumb, .showcase-title';
+const PILL_SELECTOR = '.pill-btn';
+
+/** Minimum ms between consecutive pops so rapid mouse movement doesn't machine-gun. */
+const COOLDOWN = 90;
+
+let ctx: AudioContext | null = null;
+let lastPlay = 0;
+let lastClick = 0;
+
+function ensureContext(): AudioContext {
+  if (!ctx) ctx = new AudioContext();
+  if (ctx.state === 'suspended') ctx.resume();
+  return ctx;
+}
+
+/**
+ * A short bubbly chirp: two sine oscillators sweep up in pitch while
+ * a gain envelope fades out quickly. The slight detune gives it width.
+ */
+function pop() {
+  const now = performance.now();
+  if (now - lastPlay < COOLDOWN) return;
+  lastPlay = now;
+
+  const audio = ensureContext();
+  const t = audio.currentTime;
+
+  // Gain envelope — quick attack, soft decay
+  const gain = audio.createGain();
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(0.05, t + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+  gain.connect(audio.destination);
+
+  // Primary bubble
+  const osc1 = audio.createOscillator();
+  osc1.type = 'sine';
+  osc1.frequency.setValueAtTime(420, t);
+  osc1.frequency.exponentialRampToValueAtTime(720, t + 0.06);
+  osc1.connect(gain);
+  osc1.start(t);
+  osc1.stop(t + 0.12);
+
+  // Slightly detuned harmonic for body
+  const osc2 = audio.createOscillator();
+  osc2.type = 'sine';
+  osc2.frequency.setValueAtTime(530, t);
+  osc2.frequency.exponentialRampToValueAtTime(900, t + 0.05);
+  osc2.detune.value = 8;
+
+  const gain2 = audio.createGain();
+  gain2.gain.setValueAtTime(0, t);
+  gain2.gain.linearRampToValueAtTime(0.025, t + 0.01);
+  gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+  gain2.connect(audio.destination);
+
+  osc2.connect(gain2);
+  osc2.start(t);
+  osc2.stop(t + 0.09);
+}
+
+/**
+ * Keyboard click: a brief noise burst (the sharp "tick") layered with a
+ * low-frequency thump (the key bottoming out). Very short — under 50 ms.
+ */
+function keyClick() {
+  const now = performance.now();
+  if (now - lastClick < COOLDOWN) return;
+  lastClick = now;
+
+  const audio = ensureContext();
+  const t = audio.currentTime;
+
+  // Noise burst — the sharp tick of a key cap
+  const bufferSize = audio.sampleRate * 0.03; // 30 ms
+  const noiseBuffer = audio.createBuffer(1, bufferSize, audio.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * 0.5;
+  }
+
+  const noise = audio.createBufferSource();
+  noise.buffer = noiseBuffer;
+
+  // Bandpass to make it more "clicky" and less like static
+  const filter = audio.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = 4000;
+  filter.Q.value = 1.2;
+
+  const noiseGain = audio.createGain();
+  noiseGain.gain.setValueAtTime(0.06, t);
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+
+  noise.connect(filter);
+  filter.connect(noiseGain);
+  noiseGain.connect(audio.destination);
+  noise.start(t);
+  noise.stop(t + 0.03);
+
+  // Low thump — the key bottoming out
+  const thump = audio.createOscillator();
+  thump.type = 'sine';
+  thump.frequency.setValueAtTime(150, t);
+  thump.frequency.exponentialRampToValueAtTime(60, t + 0.04);
+
+  const thumpGain = audio.createGain();
+  thumpGain.gain.setValueAtTime(0.04, t);
+  thumpGain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+
+  thump.connect(thumpGain);
+  thumpGain.connect(audio.destination);
+  thump.start(t);
+  thump.stop(t + 0.05);
+}
+
+function bind() {
+  // Respect reduced-motion preference
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const cards = document.querySelectorAll<HTMLElement>(CARD_SELECTOR);
+  for (const card of cards) {
+    if (card.dataset.hoverSound) continue; // already bound
+    card.dataset.hoverSound = '1';
+    card.addEventListener('mouseenter', pop);
+  }
+
+  const pills = document.querySelectorAll<HTMLElement>(PILL_SELECTOR);
+  for (const pill of pills) {
+    if (pill.dataset.clickSound) continue;
+    pill.dataset.clickSound = '1';
+    pill.addEventListener('mousedown', keyClick);
+  }
+}
+
+bind();
+document.addEventListener('astro:after-swap', bind);
+</script>

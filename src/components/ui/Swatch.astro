@@ -1,0 +1,48 @@
+---
+/**
+ * One colour chip on the style guide.
+ *
+ * The painted classes arrive as literal strings from the caller rather than being
+ * composed here (`bg-${token}`), because Tailwind scans source text for whole class
+ * names — a constructed one is never generated and the chip renders transparent.
+ */
+interface Props {
+  /** Token or palette variable name, shown as the caption. */
+  name: string;
+  /** The declared value, straight from global.css. */
+  value: string;
+  role?: string;
+  /**
+   * Literal class painting the chip. Omit and pass `style` instead for palette tiers,
+   * which have no utility (they're deliberately outside `@theme`).
+   */
+  base?: string;
+  /** Inline background, for palette tiers addressed by var() rather than a utility. */
+  style?: string;
+  /**
+   * Colour sitting *under* `base`. Set it for translucent tokens: the chip then covers
+   * two thirds, leaving the underlying tone visible for comparison.
+   */
+  under?: string;
+  /** Literal `text-*` class, for tokens whose job is text rather than fill. */
+  sample?: string;
+}
+
+const { name, value, role, base, style, under, sample } = Astro.props;
+---
+
+<div class="overflow-hidden rounded-lg border border-line bg-surface-raised">
+  <div class:list={['relative flex h-20 items-center justify-center', under]}>
+    <div
+      class:list={[under ? 'absolute inset-y-0 right-0 w-2/3' : 'absolute inset-0', base]}
+      style={style}
+    ></div>
+    {sample && <span class:list={['relative text-h2', sample]}>Aa</span>}
+  </div>
+
+  <div class="space-y-1 border-t border-line p-3">
+    <p class="font-mono text-micro font-medium text-content">{name}</p>
+    <p class="font-mono text-micro text-content-subtle">{value}</p>
+    {role && <p class="text-micro text-content-muted">{role}</p>}
+  </div>
+</div>

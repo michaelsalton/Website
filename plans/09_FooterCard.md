@@ -1,0 +1,6 @@
+- big card in the footer
+- light background color
+- holds the social icons and contact me button
+- feels 3D
+- has some dropshadow to it
+- tilts subtly based on mouse movement to give it a 3D effect

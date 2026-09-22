@@ -1,17 +1,14 @@
 ---
-import AboutSection from '../components/ui/AboutSection.astro';
 import Button from '../components/ui/Button.astro';
-import ProjectsShowcase from '../components/ui/ProjectsShowcase.astro';
 import SocialsTray from '../components/ui/SocialsTray.astro';
 import { SITE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout>
-  {/* ── Hero ── full viewport, vertically stacked identity block ─────────── */}
+<BaseLayout singlePage>
   <section
     id="hero"
-    class="relative flex min-h-dvh flex-col items-center justify-between bg-surface-raised px-4 pt-28 pb-12 sm:px-6"
+    class="relative flex h-dvh flex-col items-center justify-between bg-surface-raised px-4 pt-28 pb-12 sm:px-6"
   >
     {/* Location + email */}
     <div class="hero-pop-in reveal-from-top text-center" style="--pop-idx: 0;">
@@ -32,12 +29,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         {SITE.title}
       </h1>
 
-      {/* Role subtitle */}
       <p
         class="hero-pop-in text-h2 font-normal text-content-faint uppercase mt-10 sm:mt-14"
         style="--pop-idx: 2;"
       >
-        Software Developer,<br>Computer Graphics,<br>Real-Time Rendering,<br>GPU Systems
+        Software Developer,<br>
+        Computer Graphics,<br>
+        Real-Time Rendering,<br>
+        GPU Systems
       </p>
 
       <Button
@@ -50,76 +49,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </Button>
     </div>
 
-    {/* Interests */}
+    {/* Working on */}
     <div class="hero-pop-in reveal-from-bottom text-center" style="--pop-idx: 4;">
       <p class="text-label text-content uppercase">Working On</p>
       <p class="text-caption text-content-subtle mt-2 uppercase">
-        <a
-          href="/projects"
-          data-show-project="discover-old-dhanis"
-          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
-          >Discover Old D'Hanis</a
-        >{", "}
-        <a
-          href="/projects"
-          data-show-project="saga"
-          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
-          >Saga</a
-        >{", "}
-        <a
-          href="/projects"
-          data-show-project="gravel"
-          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
-          >Gravel</a
-        >{", "}
-        <a
-          href="/projects"
-          data-show-project="remolod"
-          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
-          >RemoLOD</a
-        >{", "}
-        <a
-          href="/projects"
-          data-show-project="thinkcam"
-          class="text-content-subtle hover:text-accent transition-colors cursor-pointer"
-          >ThinkCAM</a
-        >
+        Discover Old D'Hanis, Saga, Gravel, RemoLOD, ThinkCAM
       </p>
     </div>
 
     <SocialsTray
-      data-socials-tray
-      class="hero-pop-in reveal-from-left fixed bottom-6 left-6 z-50 transition-[transform,opacity] duration-(--duration-base) ease-(--ease-out-soft)"
+      class="hero-pop-in reveal-from-left fixed bottom-6 left-6 z-50"
       style="--pop-idx: 5;"
     />
   </section>
-
-  {/* ── About ── full viewport intro below the hero ──────────────────────── */}
-  <AboutSection />
-
-  {/* ── Projects showcase ── typographic title list ─────────────────────── */}
-  <ProjectsShowcase />
 </BaseLayout>
-
-<script>
-const tray = document.querySelector<HTMLElement>('[data-socials-tray]');
-const footer = document.querySelector<HTMLElement>('#footer');
-
-if (tray && footer) {
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        tray.style.transform = 'translateX(calc(-100% - 1.5rem))';
-        tray.style.opacity = '0';
-        tray.style.pointerEvents = 'none';
-      } else {
-        tray.style.transform = '';
-        tray.style.opacity = '';
-        tray.style.pointerEvents = '';
-      }
-    },
-    { threshold: 0 },
-  );
-  observer.observe(footer);
-}
-</script>

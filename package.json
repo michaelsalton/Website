@@ -23,7 +23,7 @@
     "@astrojs/react": "^6.0.5",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
-    "@astrojs/vercel": "^8.0.4",
+    "@astrojs/vercel": "^11.0.0",
     "@radix-ui/react-tooltip": "^1.2.16",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.1",

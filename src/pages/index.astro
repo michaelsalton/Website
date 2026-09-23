@@ -7,26 +7,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout singlePage>
+  {/*
+    Single-page hero. The body is locked to h-dvh, so the three blocks sit in normal
+    flow and every bit of slack lives in the two flexible spacers — they collapse first
+    as the viewport shortens, which is why nothing can overlap the way the old absolute
+    offsets did on a phone. Below the point where even the collapsed layout stops
+    fitting (a phone in landscape) the section scrolls rather than clipping the tray.
+  */}
   <section
     id="hero"
-    class="relative flex h-dvh flex-col items-center bg-surface-raised px-4 pt-4 pb-12 sm:px-6"
+    class="relative flex h-dvh flex-col items-center overflow-y-auto bg-surface-raised px-4 pt-4 pb-8 sm:px-6 sm:pb-12"
   >
     <HeroDots />
-    {/* Name — centered in the dot region (top 50%) */}
-    <div class="absolute inset-x-0 top-0 z-10 flex h-1/2 items-center justify-center px-4 sm:px-6">
+
+    {/* Name — centred in the dot region, which takes three quarters of the slack. */}
+    <div class="relative z-10 flex w-full flex-[3] items-center justify-center">
       <HeroMainText />
     </div>
 
-    {/* Sub text — starts at the halfway mark */}
-    <div
-      class="absolute inset-x-0 top-[40%] z-10 flex flex-col items-center gap-10 px-4 sm:gap-14 sm:px-6"
-    >
+    <div class="relative z-10 w-full shrink-0">
       <HeroSubText />
     </div>
 
-    {/* Socials — bottom-pinned */}
-    <div class="mt-auto">
-      <SocialsTray class="" />
+    {/* The remaining quarter, between the copy and the tray. */}
+    <div class="w-full flex-1" aria-hidden="true"></div>
+
+    <div class="relative z-10 shrink-0">
+      <SocialsTray />
     </div>
   </section>
 </BaseLayout>

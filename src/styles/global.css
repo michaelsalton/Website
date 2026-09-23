@@ -79,22 +79,6 @@
   --focus-ring: var(--color-focus);
 
   /*
-    Shader palette for the WebGL demos, as normalised RGB triples.
-
-    GLSL cannot read CSS variables and parsing oklch() in JS would mean ~40 lines of
-    colour-space maths inside the demo chunk, so the shader tones are published here as
-    plain numbers and read once via getComputedStyle (see shaderRenderer.ts). They are
-    already sRGB-encoded, which is what the framebuffer expects — no linearisation.
-
-    Deliberately more saturated than the UI pastels: this is a full-frame visual field,
-    not a surface that has to carry text. If a triple here is missing or unparseable
-    the renderer returns null and the demo poster stays put.
-  */
-  --gl-deep: 0.012 0.098 0.118; /* #03191e — near the dark surface */
-  --gl-mid: 0.443 0.812 0.843; /* #71cfd7 — the brand colour, mirrored from --aqua-200 */
-  --gl-hot: 0.976 0.682 0.635; /* #f9aea2 */
-
-  /*
     One theme only. Naming just `light` stops the browser painting form controls,
     scrollbars and the canvas behind the page in a dark scheme the site does not have.
   */
@@ -119,11 +103,22 @@
   desktop, and a clamp() would interpolate straight through the plateau.
 */
 :root {
-  --step-display: 3.25rem; /* 52px */
+  --step-display: 2.75rem; /* 44px */
   --step-h1: 2rem; /* 32px */
   --step-h2: 1.75rem; /* 28px */
   --step-h3: 1.125rem; /* 18px */
   --step-body: 1rem; /* 16px */
+}
+
+/*
+  The hero name is the longest unbreakable line on the site, so display gets one rung
+  the other roles do not need: at 52px it overflows the 16px gutter on a 320px phone.
+  Every other role already fits at its base size.
+*/
+@media (min-width: 22rem) {
+  :root {
+    --step-display: 3.25rem; /* 52px */
+  }
 }
 
 @media (min-width: 48rem) {
@@ -262,7 +257,7 @@
 
   /* The homepage hero alone. Named for its size, not its element, so `text-h1` can stay
      on the thing that is actually an <h1> on every other page. */
-  --text-display: var(--step-display); /* 44 → 64 → 80 */
+  --text-display: var(--step-display); /* 44 → 52 → 72 → 92 */
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.06em;
   --text-display--font-weight: 700;
@@ -489,82 +484,6 @@
   }
 }
 
-/*
-  Post-curtain entrance: elements slide in from the nearest edge once the curtain
-  has finished lifting. The curtain takes 1s + 0.2s delay = done at 1.2s, so these
-  start at 1.3s with a gentle slide and fade.
-*/
-.reveal-from-left,
-.reveal-from-right,
-.reveal-from-top,
-.reveal-from-bottom {
-  opacity: 0;
-  animation-duration: 0.7s;
-  animation-timing-function: var(--ease-out-soft);
-  animation-delay: 1.3s;
-  animation-fill-mode: both;
-}
-
-.reveal-from-left {
-  animation-name: slide-from-left;
-}
-
-.reveal-from-right {
-  animation-name: slide-from-right;
-}
-
-.reveal-from-top {
-  animation-name: slide-from-top;
-}
-
-.reveal-from-bottom {
-  animation-name: slide-from-bottom;
-}
-
-@keyframes slide-from-left {
-  from {
-    opacity: 0;
-    transform: translateX(-2rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-from-right {
-  from {
-    opacity: 0;
-    transform: translateX(2rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-from-top {
-  from {
-    opacity: 0;
-    transform: translateY(-2rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slide-from-bottom {
-  from {
-    opacity: 0;
-    transform: translateY(2rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @layer utilities {
   /* Screen-reader-only, but focusable — used by the skip link in BaseLayout. */
   .sr-only-focusable:not(:focus):not(:focus-within) {
@@ -619,46 +538,6 @@
   }
 
   /*
-    Mobile nav panel — collapses/expands with the grid-template-rows technique.
-    The inner <div> has `overflow: hidden` in markup so content clips during the
-    transition. The border-bottom only appears when the panel is open.
-  */
-  .nav-panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows var(--duration-base) var(--ease-out-soft);
-  }
-
-  .nav-panel-open {
-    grid-template-rows: 1fr;
-    border-bottom: 1px solid var(--color-line);
-  }
-
-  /*
-    Hamburger → X animation. The three bars start as horizontal lines. When the
-    parent button has `aria-expanded="true"`, the top and bottom bars rotate into
-    an X and the middle bar fades out.
-  */
-  .nav-bar {
-    transform-origin: center;
-    transition:
-      transform var(--duration-base) var(--ease-out-soft),
-      opacity var(--duration-fast) var(--ease-out-soft);
-  }
-
-  [aria-expanded="true"] .nav-bar-top {
-    transform: translate(0, 6px) rotate(45deg);
-  }
-
-  [aria-expanded="true"] .nav-bar-mid {
-    opacity: 0;
-  }
-
-  [aria-expanded="true"] .nav-bar-bot {
-    transform: translate(0, -6px) rotate(-45deg);
-  }
-
-  /*
     Hero dot grid — canvas-based interactive dot pattern (HeroDots.astro).
     The canvas sits behind hero content but above the fill.
   */
@@ -707,18 +586,6 @@
     .hero-card {
       width: 11rem;
     }
-  }
-
-  /*
-    Elevated card — multi-layer shadow for a convincing 3D lift off a dark ground.
-    Layer 1: tight, dark — the near contact shadow.
-    Layer 2: wide, soft — ambient occlusion.
-    Uses ink at low alpha so the shadow tints warm on cream and cool on ink.
-  */
-  .card-elevated {
-    box-shadow:
-      0 4px 12px color-mix(in oklab, var(--ink-900) 25%, transparent),
-      0 16px 48px color-mix(in oklab, var(--ink-900) 18%, transparent);
   }
 }
 

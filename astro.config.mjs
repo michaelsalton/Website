@@ -1,6 +1,5 @@
 // @ts-check
 import mdx from '@astrojs/mdx';
-import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
@@ -20,7 +19,7 @@ export default defineConfig({
 
   // /styles is the internal design reference and is marked noindex — listing it in the
   // sitemap would tell crawlers to fetch a page we've asked them not to index.
-  integrations: [react(), mdx(), sitemap({ filter: (page) => !/\/styles\/?$/.test(page) })],
+  integrations: [mdx(), sitemap({ filter: (page) => !/\/styles\/?$/.test(page) })],
 
   // Self-hosted, subset, and metrics-matched automatically: no layout shift, no
   // third-party request to fonts.googleapis.com.

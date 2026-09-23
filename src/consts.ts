@@ -30,6 +30,3 @@ export const SOCIALS = [
   { href: 'https://www.linkedin.com/in/', label: 'LinkedIn' },
   { href: 'https://github.com/michaelsalton', label: 'GitHub' },
 ] as const;
-
-/** Number of entries per page on the blog and project indexes. */
-export const PAGE_SIZE = 10;

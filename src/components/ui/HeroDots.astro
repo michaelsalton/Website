@@ -1,0 +1,87 @@
+---
+/**
+ * HeroDots — canvas-based dot grid over the hero section.
+ * Reads colours from CSS custom properties so it stays in sync with the palette.
+ */
+---
+
+<canvas id="hero-dots-canvas" aria-hidden="true"></canvas>
+
+<script>
+const canvas = document.getElementById('hero-dots-canvas') as HTMLCanvasElement;
+const ctxOrNull = canvas.getContext('2d');
+const containerOrNull = canvas.parentElement;
+if (!ctxOrNull || !containerOrNull) throw new Error('hero-dots-canvas: missing context or parent');
+const ctx = ctxOrNull;
+const container = containerOrNull;
+
+/* ── Configuration ─────────────────────────────────────────────── */
+const SPACING = 20;
+const DOT_RADIUS = 1.5;
+const DOT_OPACITY = 0.7;
+const FADE_FRACTION = 0.5; // dots fade out over top 50% of the section
+
+/* ── Colour from CSS vars ──────────────────────────────────────── */
+const dotColor = getComputedStyle(document.documentElement)
+  .getPropertyValue('--color-content-subtle')
+  .trim();
+
+/* ── Grid state ────────────────────────────────────────────────── */
+interface Dot {
+  x: number;
+  y: number;
+}
+
+let dots: Dot[] = [];
+let cols = 0;
+let rows = 0;
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = `${w}px`;
+  canvas.style.height = `${h}px`;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  cols = Math.ceil(w / SPACING) + 1;
+  rows = Math.ceil(h / SPACING) + 1;
+  dots = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      dots.push({ x: c * SPACING, y: r * SPACING });
+    }
+  }
+}
+
+/* ── Render ───────────────────────────────────────────────────── */
+function draw() {
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  ctx.clearRect(0, 0, w, h);
+
+  for (const dot of dots) {
+    const fadeY = dot.y / (h * FADE_FRACTION);
+    if (fadeY > 1) continue;
+    const alpha = DOT_OPACITY * (1 - fadeY);
+
+    ctx.beginPath();
+    ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = dotColor;
+    ctx.globalAlpha = alpha;
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+/* ── Init ──────────────────────────────────────────────────────── */
+resize();
+draw();
+window.addEventListener('resize', () => {
+  resize();
+  draw();
+});
+</script>

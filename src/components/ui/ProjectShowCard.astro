@@ -7,7 +7,7 @@
 
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import Button from './Button.astro';
+import KeyButton from './KeyButton.astro';
 import PillButton from './PillButton.astro';
 import TextBlock from './TextBlock.astro';
 
@@ -121,14 +121,14 @@ const { title, summary, stack, cover, coverAlt, repo, live, link } = project.dat
       {(repo || live) && (
         <div class="mt-6 flex justify-center gap-4">
           {repo && (
-            <Button href={repo} variant="press" rel="noopener" target="_blank">
+            <KeyButton href={repo} variant="press" rel="noopener" target="_blank">
               Source
-            </Button>
+            </KeyButton>
           )}
           {live && (
-            <Button href={live} variant="press" rel="noopener" target="_blank">
+            <KeyButton href={live} variant="press" rel="noopener" target="_blank">
               Live
-            </Button>
+            </KeyButton>
           )}
         </div>
       )}
@@ -150,29 +150,6 @@ const { title, summary, stack, cover, coverAlt, repo, live, link } = project.dat
 </div>
 
 <script>
-/** Short soft tick sound via Web Audio for the close button. */
-function playCloseTick() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const ctx = new AudioContext();
-  if (ctx.state === 'suspended') ctx.resume();
-  const t = ctx.currentTime;
-
-  const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0, t);
-  gain.gain.linearRampToValueAtTime(0.08, t + 0.005);
-  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-  gain.connect(ctx.destination);
-
-  const osc = ctx.createOscillator();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(800, t);
-  osc.frequency.exponentialRampToValueAtTime(400, t + 0.04);
-  osc.connect(gain);
-  osc.start(t);
-  osc.stop(t + 0.06);
-}
-
 function initShowCards() {
   const triggers = document.querySelectorAll<HTMLElement>('[data-show-project]');
   const modals = document.querySelectorAll<HTMLElement>('.project-show-card');
@@ -211,7 +188,7 @@ function initShowCards() {
   modals.forEach((modal) => {
     modal.querySelectorAll('[data-close-show]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        if (btn instanceof HTMLButtonElement) playCloseTick();
+        // close button clicked
         closeModal(modal);
       });
     });

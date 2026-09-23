@@ -26,10 +26,9 @@ export const NAV = [
 ] as const;
 
 export const SOCIALS = [
+  { href: `mailto:${SITE.email}`, label: 'Email' },
   { href: 'https://www.linkedin.com/in/', label: 'LinkedIn' },
   { href: 'https://github.com/michaelsalton', label: 'GitHub' },
-  { href: 'https://www.youtube.com/', label: 'YouTube' },
-  { href: `mailto:${SITE.email}`, label: 'Email' },
 ] as const;
 
 /** Number of entries per page on the blog and project indexes. */

@@ -9,16 +9,12 @@
  * pointing at the other; if you change a value here, change the matching palette entry
  * in `src/styles/global.css`, and vice versa.
  *
- *   surface  → --color-surface  → --shell-050
- *   accent   → --color-accent   → --aqua-600
- *   onAccent → --color-on-accent → --shell-050
- *
- * Note `accent` is the deep teal tier, not the brand aqua #71cfd7: cream text on the
- * bright aqua is 1.73:1, which would make the favicon monogram unreadable. Here it is
- * 6.03:1.
+ *   surface  → --color-surface  → --ink-900
+ *   accent   → --color-accent   → --aqua-200
+ *   onAccent → --color-on-accent → --ink-900
  */
 export const THEME_HEX = {
-  surface: '#f5fbfb',
-  accent: '#076b72',
-  onAccent: '#f5fbfb',
+  surface: '#08191e',
+  accent: '#71cfd7',
+  onAccent: '#08191e',
 } as const;

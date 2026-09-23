@@ -1,0 +1,16 @@
+---
+import HeroProjectList from './HeroProjectList.astro';
+---
+
+<div class="flex flex-col items-center gap-10 text-center text-body text-content-subtle sm:gap-14">
+  <div class="hero-pop-in flex flex-col items-center gap-2" style="--pop-idx: 2;">
+    <p>I'm a software developer, interested in</p>
+    <p>computer graphics,</p>
+    <p>real-time rendering,</p>
+    <p>and gpu systems.</p>
+  </div>
+
+  <div class="hero-pop-in" style="--pop-idx: 3;">
+    <HeroProjectList />
+  </div>
+</div>

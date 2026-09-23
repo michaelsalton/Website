@@ -1,0 +1,56 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+/**
+ * Renders an <a> when given `href`, otherwise a <button> — so a link never gets
+ * button semantics or vice versa.
+ *
+ * Five visual variants plus an `inverse` modifier for buttons sitting on
+ * `surface-inverse` (the footer's ink band). See plans/03_Buttons.md for the
+ * full spec, contrast rationale and migration map.
+ */
+type Props = {
+  variant?: 'press' | 'underline' | 'text';
+  inverse?: boolean;
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+} & Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'href' | 'type'>;
+
+const {
+  variant = 'press',
+  inverse = false,
+  href,
+  type = 'button',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const base =
+  'pill-btn inline-flex items-center justify-center gap-2 font-medium transition-all duration-(--duration-fast)';
+
+const variants: Record<string, string> = {
+  underline: inverse
+    ? 'btn-underline px-2 py-1.5 text-accent-soft'
+    : 'btn-underline px-2 py-1.5 text-content hover:text-content active:text-accent-hover',
+
+  press: inverse
+    ? 'rounded-xl px-5 py-2.5 text-caption bg-accent-soft text-content shadow-[0_2px_0_0_var(--color-accent)_inset,0_-2px_0_0_var(--color-accent)_inset,2px_0_0_0_var(--color-accent)_inset,-2px_0_0_0_var(--color-accent)_inset,0_4px_0_0_var(--color-accent)] hover:shadow-[0_2px_0_0_var(--color-accent)_inset,0_-2px_0_0_var(--color-accent)_inset,2px_0_0_0_var(--color-accent)_inset,-2px_0_0_0_var(--color-accent)_inset,0_5px_0_0_var(--color-accent)] hover:-translate-y-px active:shadow-[0_2px_0_0_var(--color-accent)_inset,0_-2px_0_0_var(--color-accent)_inset,2px_0_0_0_var(--color-accent)_inset,-2px_0_0_0_var(--color-accent)_inset,0_1px_0_0_var(--color-accent)] active:translate-y-[3px] active:duration-[75ms]'
+    : 'rounded-xl px-5 py-2.5 text-caption bg-surface-raised text-accent shadow-[0_2px_0_0_var(--color-accent)_inset,0_-2px_0_0_var(--color-accent)_inset,2px_0_0_0_var(--color-accent)_inset,-2px_0_0_0_var(--color-accent)_inset,0_4px_0_0_var(--color-accent)] hover:shadow-[0_2px_0_0_var(--color-accent)_inset,0_-2px_0_0_var(--color-accent)_inset,2px_0_0_0_var(--color-accent)_inset,-2px_0_0_0_var(--color-accent)_inset,0_5px_0_0_var(--color-accent)] hover:-translate-y-px active:shadow-[0_2px_0_0_var(--color-accent)_inset,0_-2px_0_0_var(--color-accent)_inset,2px_0_0_0_var(--color-accent)_inset,-2px_0_0_0_var(--color-accent)_inset,0_1px_0_0_var(--color-accent)] active:translate-y-[3px] active:duration-[75ms]',
+
+  text: inverse
+    ? 'px-3 py-2 text-content-inverse hover:text-accent-soft'
+    : 'px-3 py-2 text-content-muted hover:text-accent active:text-accent-hover',
+};
+
+const classes = [base, variants[variant], className];
+---
+
+{href ? (
+    <a href={href} class:list={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class:list={classes} {...rest}>
+      <slot />
+    </button>
+  )}

@@ -1,5 +1,5 @@
 ---
-import Button from '../components/ui/Button.astro';
+import KeyButton from '../components/ui/KeyButton.astro';
 import { NAV } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
@@ -21,16 +21,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <ul class="flex flex-wrap gap-2">
         {NAV.map((item) => (
             <li>
-              <Button href={item.href} variant="underline">
+              <KeyButton href={item.href} variant="underline">
                 {item.label}
-              </Button>
+              </KeyButton>
             </li>
           ))}
       </ul>
     </nav>
 
     <p class="mt-10">
-      <Button href="/" variant="underline">&larr; Back home</Button>
+      <KeyButton href="/" variant="underline">&larr; Back home</KeyButton>
     </p>
   </div>
 </BaseLayout>

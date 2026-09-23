@@ -16,13 +16,14 @@ interface Props {
   showProject?: string;
 }
 
-const { href, title, description, meta, tags = [], showProject } = Astro.props;
+const { href, title, description, meta, tags = [], showProject, ...rest } = Astro.props;
 ---
 
 <a
   href={href}
   class="group flex h-full flex-col rounded-xl border border-line bg-surface-raised p-5 transition-[border-color,transform] duration-(--duration-base) ease-(--ease-out-soft) hover:-translate-y-0.5 hover:border-accent"
   {...showProject ? { 'data-show-project': showProject } : {}}
+  {...rest}
 >
   {meta && <p class="mb-2 text-label uppercase text-content-subtle">{meta}</p>}
 

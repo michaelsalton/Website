@@ -12,7 +12,7 @@
  * so adding a token without documenting it fails the build instead of silently going
  * stale — the same guarantee for `--text-*` as for `--color-*`.
  */
-import Button from '../components/ui/Button.astro';
+import KeyButton from '../components/ui/KeyButton.astro';
 import Swatch from '../components/ui/Swatch.astro';
 import PageLayout from '../layouts/PageLayout.astro';
 import globalCss from '../styles/global.css?raw';
@@ -394,21 +394,21 @@ const families = ['shell', 'ink', 'aqua', 'salmon'].map((family) => ({
         <div>
           <h3 class="text-label uppercase text-highlight">Press</h3>
           <div class="mt-4">
-            <Button href="#buttons" class="px-8 py-4">Press me</Button>
+            <KeyButton href="#buttons" class="px-8 py-4">Press me</KeyButton>
           </div>
         </div>
 
         <div>
           <h3 class="text-label uppercase text-highlight">Underline</h3>
           <div class="mt-4">
-            <Button href="#buttons" variant="underline">Underline link</Button>
+            <KeyButton href="#buttons" variant="underline">Underline link</KeyButton>
           </div>
         </div>
 
         <div>
           <h3 class="text-label uppercase text-highlight">Text</h3>
           <div class="mt-4">
-            <Button href="#buttons" variant="text">Text link</Button>
+            <KeyButton href="#buttons" variant="text">Text link</KeyButton>
           </div>
         </div>
 
@@ -417,9 +417,9 @@ const families = ['shell', 'ink', 'aqua', 'salmon'].map((family) => ({
           <div
             class="on-inverse mt-4 flex flex-wrap items-center gap-5 rounded-lg bg-surface-inverse p-6"
           >
-            <Button href="#buttons" inverse class="px-8 py-4">Press</Button>
-            <Button href="#buttons" variant="underline" inverse>Underline</Button>
-            <Button href="#buttons" variant="text" inverse>Text</Button>
+            <KeyButton href="#buttons" inverse class="px-8 py-4">Press</KeyButton>
+            <KeyButton href="#buttons" variant="underline" inverse>Underline</KeyButton>
+            <KeyButton href="#buttons" variant="text" inverse>Text</KeyButton>
           </div>
         </div>
       </div>

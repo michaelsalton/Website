@@ -1,0 +1,19 @@
+---
+import { getProjects } from '../../lib/content';
+
+const projects = await getProjects();
+---
+
+<div class="flex flex-col items-center gap-2">
+  <p>I'm currently working on</p>
+  {projects.map((p) => (
+    <a
+      href={p.data.link ?? `/${p.id}`}
+      {...(p.data.link ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      class="group transition-colors hover:text-accent"
+    >
+      <span class="group-hover:hidden">{p.data.title}</span>
+      <span class="hidden group-hover:inline">{p.data.summary}</span>
+    </a>
+  ))}
+</div>

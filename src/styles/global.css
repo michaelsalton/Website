@@ -17,7 +17,7 @@
   enforceable: no utility class names a hue, so the only way to get colour into markup
   is through a role. Add a role here before reaching for a literal.
 
-  One theme, light only. There is no dark palette, no `dark:` variant and no
+  One theme, dark only. There is no light palette, no `dark:` variant and no
   `data-theme` attribute — see `color-scheme` below.
 
   ── Type architecture: the same two layers ───────────────────────────────────────────
@@ -57,11 +57,12 @@
   --shell-200: oklch(90.5% 0.014 190); /* #d6e3e2 */
   --shell-300: oklch(64% 0.02 190); /* #7f908f */
 
+  --ink-950: oklch(15% 0.02 220); /* #030f13 */
   --ink-900: oklch(20% 0.025 220); /* #08191e */
   --ink-800: oklch(24% 0.024 220); /* #122227 */
   --ink-600: oklch(38% 0.022 220); /* #36454b */
   --ink-400: oklch(49% 0.018 220); /* #566368 */
-  --ink-200: oklch(62.5% 0.015 220); /* #7e8a8e — 3.40:1 on surface, large text only */
+  --ink-200: oklch(62.5% 0.015 220); /* #7e8a8e */
 
   --aqua-200: oklch(80% 0.09 203); /* #71cfd7 — the brand colour, used exactly */
   --aqua-600: oklch(48% 0.08 203); /* #076b72 */
@@ -89,7 +90,7 @@
     not a surface that has to carry text. If a triple here is missing or unparseable
     the renderer returns null and the demo poster stays put.
   */
-  --gl-deep: 0.016 0.184 0.196; /* #042f32 */
+  --gl-deep: 0.012 0.098 0.118; /* #03191e — near the dark surface */
   --gl-mid: 0.443 0.812 0.843; /* #71cfd7 — the brand colour, mirrored from --aqua-200 */
   --gl-hot: 0.976 0.682 0.635; /* #f9aea2 */
 
@@ -97,7 +98,7 @@
     One theme only. Naming just `light` stops the browser painting form controls,
     scrollbars and the canvas behind the page in a dark scheme the site does not have.
   */
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 /*
@@ -162,11 +163,11 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  /* Surfaces. White cards pop *up* off the cream ground, hence `raised` being lighter. */
-  --color-surface: var(--shell-050);
-  --color-surface-sunken: var(--shell-100);
-  --color-surface-raised: var(--shell-000);
-  --color-surface-inverse: var(--ink-800);
+  /* Surfaces. Raised cards are a step lighter than the ground for depth. */
+  --color-surface: var(--ink-900);
+  --color-surface-sunken: var(--ink-950);
+  --color-surface-raised: var(--ink-800);
+  --color-surface-inverse: var(--shell-050);
 
   /*
     Overlays — controls floating over arbitrary imagery, where no page surface is
@@ -177,27 +178,28 @@
   --color-overlay: color-mix(in oklab, var(--ink-900) 55%, transparent);
   --color-overlay-hover: color-mix(in oklab, var(--ink-900) 75%, transparent);
 
-  /* Brand. Aqua carries interaction; salmon accents and marks position. */
-  --color-accent: var(--aqua-600);
-  --color-accent-hover: var(--aqua-700);
-  --color-accent-soft: var(--aqua-200);
-  --color-highlight: var(--salmon-600);
-  --color-highlight-soft: var(--salmon-200);
+  /* Brand. Bright aqua is now the primary interactive tone on dark surfaces;
+     deep teal serves as the soft/muted accent. */
+  --color-accent: var(--aqua-200);
+  --color-accent-hover: var(--aqua-600);
+  --color-accent-soft: var(--aqua-700);
+  --color-highlight: var(--salmon-200);
+  --color-highlight-soft: var(--salmon-600);
 
-  /* Content. */
-  --color-content: var(--ink-900);
-  --color-content-muted: var(--ink-600);
-  --color-content-subtle: var(--ink-400);
-  /* 3.40:1 — clears AA for large text only. Never put body copy on this. */
-  --color-content-faint: var(--ink-200);
-  --color-content-inverse: var(--shell-050);
-  --color-content-inverse-muted: var(--shell-300);
+  /* Content. Light text on dark surfaces. */
+  --color-content: var(--shell-050);
+  --color-content-muted: var(--shell-200);
+  --color-content-subtle: var(--shell-300);
+  /* Large text only on dark ground. */
+  --color-content-faint: var(--ink-400);
+  --color-content-inverse: var(--ink-900);
+  --color-content-inverse-muted: var(--ink-600);
 
   /*
     Text on a coloured fill. No `on-accent-soft` / `on-highlight-soft`: text on either
     pastel is always `content` (13.70:1 and 13.59:1), so a token would just be an alias.
   */
-  --color-on-accent: var(--shell-050);
+  --color-on-accent: var(--ink-900);
   --color-on-overlay: var(--shell-050);
 
   /*
@@ -205,10 +207,10 @@
     boundaries that are themselves the affordance — a secondary button's edge, the
     scrollbar thumb — and clears 3:1 against the page.
   */
-  --color-line: var(--shell-200);
-  --color-line-strong: var(--shell-300);
+  --color-line: var(--ink-600);
+  --color-line-strong: var(--ink-400);
 
-  --color-focus: var(--salmon-600);
+  --color-focus: var(--salmon-200);
 
   /*
     ── Type roles ─────────────────────────────────────────────────────────────────────
@@ -320,6 +322,22 @@
     this line exists — the five max-w-prose call sites narrow with .prose.
   */
   --container-prose: 58ch;
+}
+
+/*
+  ── CUSTOM CURSOR ──────────────────────────────────────────────────────────────
+  Half-Life crowbar replacing the native pointer on fine-pointer (mouse) devices.
+  Touch-only devices keep the native cursor. The hotspot is at (5, 3) — near the
+  tip of the hook. `auto` fallback ensures usability if the image fails to load.
+*/
+@media (pointer: fine) {
+  *,
+  *::before,
+  *::after {
+    cursor:
+      url("/cursors/crowbar-32.png") 0 10,
+      auto !important;
+  }
 }
 
 @layer base {
@@ -564,7 +582,7 @@
     nothing — so the ring switches to the pastel tier (12.33:1) for everything inside.
   */
   .on-inverse {
-    --focus-ring: var(--color-highlight-soft);
+    --focus-ring: var(--color-highlight);
   }
 
   /* Animated underline for the `underline` button variant. Lives here (not in a
@@ -638,6 +656,17 @@
 
   [aria-expanded="true"] .nav-bar-bot {
     transform: translate(0, -6px) rotate(-45deg);
+  }
+
+  /*
+    Hero dot grid — canvas-based interactive dot pattern (HeroDots.astro).
+    The canvas sits behind hero content but above the fill.
+  */
+  #hero-dots-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
   }
 
   /*

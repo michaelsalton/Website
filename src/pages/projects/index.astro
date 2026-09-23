@@ -19,11 +19,12 @@ const projects = await getProjects();
         {projects.map((project) => (
           <li>
             <Card
-              href={`/projects/${project.id}`}
+              href={project.data.link ?? `/${project.id}`}
               title={project.data.title}
               description={project.data.summary}
               meta={`${project.data.year} · ${project.data.role}`}
               tags={project.data.stack}
+              {...(project.data.link ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
             />
           </li>
         ))}

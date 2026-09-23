@@ -28,7 +28,7 @@ const PLACEHOLDER_FILLS = [
       {allProjects.slice(0, 6).map((project, i) => (
         <li class="work-reveal" style={`--reveal-i: ${i}`}>
           <SquareCard
-            href={`/projects/${project.id}`}
+            href={`/${project.id}`}
             title={project.data.title}
             cover={project.data.cover}
             coverAlt={project.data.coverAlt}

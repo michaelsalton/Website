@@ -10,17 +10,19 @@ interface Props {
 const { class: className, ...attrs } = Astro.props;
 ---
 
-<ul
+<div
   class:list={[
-    'inline-flex flex-col items-center gap-2 rounded-xl bg-surface-sunken px-1.5 py-3',
+    'flex flex-col items-center gap-4',
     className,
   ]}
-  aria-label="Social links"
   {...attrs}
 >
-  {SOCIALS.map((s) => (
-    <li>
-      <SocialIcon href={s.href} label={s.label} />
-    </li>
-  ))}
-</ul>
+  <p class="text-caption text-content-subtle">Contact me</p>
+  <ul class="inline-flex items-center gap-2" aria-label="Social links">
+    {SOCIALS.map((s) => (
+      <li>
+        <SocialIcon href={s.href} label={s.label} />
+      </li>
+    ))}
+  </ul>
+</div>

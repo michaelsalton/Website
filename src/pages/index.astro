@@ -1,65 +1,32 @@
 ---
-import Button from '../components/ui/Button.astro';
+import HeroDots from '../components/ui/HeroDots.astro';
+import HeroMainText from '../components/ui/HeroMainText.astro';
+import HeroSubText from '../components/ui/HeroSubText.astro';
 import SocialsTray from '../components/ui/SocialsTray.astro';
-import { SITE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout singlePage>
   <section
     id="hero"
-    class="relative flex h-dvh flex-col items-center justify-between bg-surface-raised px-4 pt-28 pb-12 sm:px-6"
+    class="relative flex h-dvh flex-col items-center bg-surface-raised px-4 pt-4 pb-12 sm:px-6"
   >
-    {/* Location + email */}
-    <div class="hero-pop-in reveal-from-top text-center" style="--pop-idx: 0;">
-      <p class="text-label text-content uppercase">Montreal</p>
-      <a
-        href={`mailto:${SITE.email}`}
-        class="text-caption text-content-subtle hover:text-accent transition-colors"
-        >{SITE.email}</a
-      >
+    <HeroDots />
+    {/* Name — centered in the dot region (top 50%) */}
+    <div class="absolute inset-x-0 top-0 z-10 flex h-1/2 items-center justify-center px-4 sm:px-6">
+      <HeroMainText />
     </div>
 
-    {/* Name → role */}
-    <div class="flex flex-col items-end -mt-12 sm:-mt-16">
-      <h1
-        class="hero-pop-in text-display text-content text-center uppercase w-full"
-        style="--pop-idx: 1;"
-      >
-        {SITE.title}
-      </h1>
-
-      <p
-        class="hero-pop-in text-h2 font-normal text-content-faint uppercase mt-10 sm:mt-14"
-        style="--pop-idx: 2;"
-      >
-        Software Developer,<br>
-        Computer Graphics,<br>
-        Real-Time Rendering,<br>
-        GPU Systems
-      </p>
-
-      <Button
-        href={`mailto:${SITE.email}`}
-        target="_blank"
-        class="hero-pop-in mt-14 self-center"
-        style="--pop-idx: 3;"
-      >
-        Contact Me
-      </Button>
+    {/* Sub text — starts at the halfway mark */}
+    <div
+      class="absolute inset-x-0 top-[40%] z-10 flex flex-col items-center gap-10 px-4 sm:gap-14 sm:px-6"
+    >
+      <HeroSubText />
     </div>
 
-    {/* Working on */}
-    <div class="hero-pop-in reveal-from-bottom text-center" style="--pop-idx: 4;">
-      <p class="text-label text-content uppercase">Working On</p>
-      <p class="text-caption text-content-subtle mt-2 uppercase">
-        Discover Old D'Hanis, Saga, Gravel, RemoLOD, ThinkCAM
-      </p>
+    {/* Socials — bottom-pinned */}
+    <div class="mt-auto">
+      <SocialsTray class="" />
     </div>
-
-    <SocialsTray
-      class="hero-pop-in reveal-from-left fixed bottom-6 left-6 z-50"
-      style="--pop-idx: 5;"
-    />
   </section>
 </BaseLayout>
